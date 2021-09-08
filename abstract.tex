@@ -12,8 +12,10 @@
 \usepackage{cleveref}
 
 \newtheorem{property}{Property}
+\newtheorem{definition}{Definition}
 \newtheorem{claim}{Claim}
 \newtheorem{rrule}{Rule}
+\newtheorem{thm}{Theorem}
 
 % \title{Consensus with Permissionless Quorums in the Stellar Network}
 % A reference to Cachin's paper:
@@ -26,7 +28,7 @@
 \maketitle
 
 \abstract{
-  Fail-prone systems capture assumptions about which processes may fail together during an execution of a distributed system, and to every fail-prone system corresponds a canonical quorum system that can be used to solve tasks such as read-write registers and consensus. A disadvantage of quorum systems is that require prior system-wide agreement on the notion of quorum, which is hard to achieve in a permissionless system. The Stellar Network offers a practical scheme to obtain a federated byzantine quorum system (FBQS for short), which can be used to solve consensus, in a permissionless network. However, the relationship between the FBQS model and traditional quorum systems is not well-understood. In this paper we show that, similarly to traditional quorum systems, a FBQS corresponds to assumptions about failures that are formalized using a fail-prone system.
+  Fail-prone systems capture assumptions about which processes may fail together during an execution of a distributed system, and to every fail-prone system corresponds a canonical quorum system that can be used to solve tasks such as read-write registers and consensus. A disadvantage of quorum systems is that require prior system-wide agreement on the notion of quorum, which is hard to achieve in a permissionless system. Even asymmetric quorums systems, where each process makes its own assumptions, require that every two processes make compatible assumptions, which again is hard to achieve in a permissionless system. The Stellar Network offers a practical scheme to obtain a federated byzantine quorum system (FBQS for short), which can be used to solve consensus, in a permissionless network. However, the relationship between the FBQS model and traditional quorum systems is not well-understood. In this paper we show that, similarly to traditional quorum systems, a FBQS corresponds to assumptions about failures that are formalized using a fail-prone system.
 }
 
 \section{Introduction}
@@ -39,7 +41,7 @@ A quorum system for $\mathcal{F}$ is a set of quorums, which are sets of process
 
 Hirt and Maurer show that there exists a quorum system for $\mathcal{F}$ if and only if no three fail-prone sets cover the whole system (this property is called property $Q^3(\mathcal{F})$). Moreover, every fail-prone system that satisfying $Q^3(\mathcal{F})$ determines a canonical quorum system $\overline{\mathcal{F}}$ where $Q$ is a quorum if and only if $Q$ is the complement of a fail-prone set.%$Q\in\overline{\mathcal{F}}$ if and only if there exists a fail-prone set $F\in\mathcal{F}$ such that $Q=\mathcal{P}\setminus F$.
 
-Cachin and Tackmann generalize fail-prone systems to asymmetric fail-prone systems, where each process makes its own assumptions about which processes may fail together. An asymmetric fail-prone system is a family of fail-prone systems $\mathbb{F}=\left\{\mathcal{F}_1,...,\mathcal{F}_n\right\}$ where $\mathcal{F}_i$ is a fail-prone system denoting the assumptions of process $p_i$. 
+Cachin and Tackmann generalize fail-prone systems to asymmetric fail-prone systems, where each process makes its own assumptions about which processes may fail together. An asymmetric fail-prone system is a family of fail-prone systems $\mathbb{F}=\left\{\mathcal{F}_1,...,\mathcal{F}_n\right\}$ where $\mathcal{F}_i$ is a fail-prone system denoting the assumptions of process $p_i$.
 
 Similarly, an asymmetric quorum system is a family of quorum systems $\mathbb{Q}=\left\{\mathcal{Q}_1,...,\mathcal{Q}_n\right\}$ where $\mathcal{Q}_i$ is the quorum system of process $p_i$. $\mathbb{Q}$ must be such that (a) for every two processes $p_i$ and $p_j$ and for every two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, $Q_i\cap Q_j$ contains a process which both $p_i$ and $p_j$ assume is not faulty, and (b) for every set of process $F_i$ that $p_i$ assume may fail together, there is a quorum of $p_i$ that is disjoint from $F_i$. Those conditions enable solving useful distributed computing tasks such as read-write registers and broadcast using well-known techniques. Moreover, Cachin and Tackmann show that property $Q^3(\mathcal{F})$ generalizes as follows TODO
 %and that an asymmetric quorum system $\mathcal{F}$ that satisfies $Q^3(\mathcal{F})$ determines a canonical asymmetric quorum system... TODO
@@ -52,9 +54,48 @@ The Stellar Network offers a practical solution to this problem. However, as Cac
 
 % In a FBQS, processes do not know who the system participants are exactly. Instead, each process $p_i$ only knows of a subset $P_i$ of the participants and makes assumptions about failures using a fail-prone system $\mathcal{F}_i$ over $P_i$. Moreover, the meaning of the fail-prone system is different from previous work: process $p_i$ assumes that, in every execution, (a) it has made accurate assumptions, i.e. the set of process that actually fail is a set $F$ such that $P_i\cap F \in\mathcal{F}_i$, (b) the processes in $P_i\setminus F$ in turn have made accurate assumptions, and (c) so on recursively.
 
-\section{Federated Fail-Prone Systems}
+\section{Federated Quorum Systems}
 
-In a FBQS, processes do not know who the system participants are exactly. Instead, each process $p_i$ only knows of a subset $P_i$ of the participants and makes assumptions about failures using a fail-prone system $\mathcal{F}_i$ over $P_i$. %Some processes may make wrong assumptions, and so $p_i$ does not assume that every other process's assumption satisfies some desirable properties.
+In a FBQS, processes do not know who the system participants are exactly. Instead, each process $p_i$ only knows of a subset $P_i$ of the participants and makes assumptions about failures using a fail-prone system $\mathcal{F}_i$ over $P_i$. The processes' assumptions are satisfied in an execution if, for every $p_j\in I$, the set of processes that actually fail is a set $F$ such that $P_j\cap F \in\mathcal{F}_j$.
+
+Formally, we define a federated fail-prone system as a family of fail-prone systems $\mathbb{F}=\left\{\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right\}$ where $P_i$ is a set of processes and $\mathcal{F}_i$ is a set of sets of processes such that every $F\in\mathcal{F}_i$ is a subset of $P_i$.
+
+Given a federated fail-prone system $\mathbb{F}$, we define a global fail-prone set as a set of processes obtained by taking the union over all processes of one fail-prone set per process. Formally, $G$ is a global fail-prone set if and only if there exists a function $f$ from process to fail-prone set such that (a) for every $p_i$, $f(p_i)\in \mathcal{F}_i$, and (b) $G=\bigcup_{p\in\mathcal{P}} f(p)$.
+
+A federated quorum system for $\mathbb{F}$ is a family of quorum systems $\mathbb{Q}=\left\{Q_1,...,Q_n\right\}$, where $Q_i$ is a quorum system over $\mathcal{P}$ for $p_i$. Moreover, $\mathbb{Q}$ must satisfy the following two properties.
+\begin{itemize}
+  \item [Closedness] If $Q_i$ is a quorum of $p_i$ and $p_j\in Q_i$, then there exists a quorum $Q_j$ of $p_j$ such that $Q_j\subseteq Q_i$.
+  \item [Availability] If $Q_i$ is a quorum of $p_i$ then there exists a fault-prone set $F_i$ of $p_i$ such that $P_i\cap Q_i$ is disjoint from $F_i$.
+  \item[Consistency] For every two processes $p_i$ and $p_j$ and every two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, there is a member of both $Q_i$ and $Q_j$ that does not belong to any global fail-prone set.
+  % \item[Quorum Availability] For every process $p_i$ and every global fail-prone set $F$, there is a quorum $Q_i$ of $p_i$ that is disjoint from $F$.
+\end{itemize}
+
+We are now ready to define property $Q^3(\mathcal{F})$ for federated fail-prone systems and show that there exists a federated quorum system for $\mathcal{F}$ if and only if $Q^3(\mathcal{F})$ holds.
+
+Property $Q^3(\mathcal{F})$ holds if and only if for every four global fail-prone sets $G_1$, $G_2$, $G_3$, and $G_4$,
+\begin{equation}
+  \mathcal{P}\not\subseteq G_1\cup G_2\cup \left(G_3\cap G_4\right)
+\end{equation}
+
+\begin{thm}
+  There exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds.
+\end{thm}
+
+To prove the theorem, we first show that for every federated fail-prone system $\mathcal{F}$ satisfying $Q^3(\mathcal{F})$, there exists a canonical quorum system $\overline{\mathbb{F}}$ for $\mathbb{F}$. Second, we show that if $\mathbb{Q}$ is a federated quorum system for $\mathcal{F}$, then $Q^3(\mathcal{F})$ must hold.
+
+\begin{definition}[Canonical federeated quorum system for $\mathbb{F}$]
+Given a federated fail-prone system $\mathbb{F}$ satisfying $Q^3(\mathbb{F})$, we define $\overline{\mathbb{F}}=\left\{\mathcal{Q}_1,...,\mathcal{Q}_n\right\}$, where the set $\mathcal{Q}_i$ of quorums of $p_i$ is the biggest set such that, for every $Q\in\mathcal{Q}_i$,
+\begin{enumerate}
+  \item $p_i\in Q$ and
+  \item for every $p_j\in Q$, there is a fault-prone set $F$ of $p_j$ such that $P_j\setminus F\subseteq Q$.
+\end{enumerate}
+\end{definition}
+
+
+Clearly, $\overline{\mathbb{F}}$  satisfies the Availability property by definition. Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closedness property. Finally, consider two processes $p_i$ and $p_j$ and two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$. Then, 
+
+\section{Old stuff}
+
 
 Thus, the meaning of the fail-prone system is different from previous work: process $p_i$ assumes that there is a set $I$ of processes, unknown to $p_i$, including $p_i$, such that, in every execution, every member of $I$ has made accurate assumptions; in other words, for every execution and every $p_j\in I$, the set of processes that actually fail is a set $F$ such that $P_j\cap F \in\mathcal{F}_j$.
 
@@ -62,7 +103,7 @@ As in the work of Cachin and Tackmann, a quorum system is... Now the canonical q
 
 Formally, we define a permissionless asymmetric fail-prone system $\mathbb{F}=\left\{\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right\}$ where $P_i$ is a set of processes and $\mathcal{F}_i$ is a set of sets of processes such that every $F\in\mathcal{F}_i$ is a subset of $P_i$.
 
-A quorum system for $\mathbb{F}$ is a set of sets $\mathbb{Q}=\left\{Q_1,...,Q_m\right\}$, where $Q_i$ is a quorum system for $p_i$. $\mathbb{Q}$ must satisfy the following properties. The intersection of two quorums 
+A quorum system for $\mathbb{F}$ is a set of sets $\mathbb{Q}=\left\{Q_1,...,Q_m\right\}$, where $Q_i$ is a quorum system for $p_i$. $\mathbb{Q}$ must satisfy the following properties. The intersection of two quorums
 
   We now generalize the $B^3$ condition, abbreviated $B^3(\mathbb{F})$, as follows. First, define the directed graph $G_\mathbb{F}$ over processes such that there is an edge from $p_i$ to $p_j$ if and only if $p_j\in P_i$. Let $G_\mathbb{F}^*$ be the transitive closure of $G_\mathbb{F}$, and let $G_\mathbb{F}^*(p_i)$ be the set of processes reachable from $p_i$ in $G_\mathbb{F}$. Let $\mathcal{C}$ be the set of functions $\left\{C_1,...,C_m\right\}$ that map a process to one of its fail-prone sets (i.e. each $C_j$ is a function from processes to sets of processes such that, for every $p_i$, $C_j(p_i)\in \mathcal{F}_i$).
   $B^3(\mathbb{F})$ holds if and only if for every two processes $p_i$ and $p_j$, for every $C_\alpha$, $C_\beta$, $C_\gamma$, and $C_\delta$ in $\mathcal{C}$:
@@ -71,14 +112,14 @@ A quorum system for $\mathbb{F}$ is a set of sets $\mathbb{Q}=\left\{Q_1,...,Q_m
   \end{equation}
 
 
-The result of Cachin and Tackmann is of a similar form: a quorum system exists if, for every two processes, three sets do not cover the entire system. However, in a permissionless system, 
+The result of Cachin and Tackmann is of a similar form: a quorum system exists if, for every two processes, three sets do not cover the entire system. However, in a permissionless system,
 
 
 The Stellar Network is a permissionless network where node's self-declared trust assumptions, embodied in their quorum slices, give rise to a set of quorums.
 
 We consider a distributed system consisting of a large number of processes including $n$ well-behaved processes $\mathcal{P}=\left\{p_1,...,p_n\right\}$. We assume that processes do not know $\mathcal{P}$.
 
-Informally, we consider the situation where individuals make decision, such as what to vote for, by listening to their friends. 
+Informally, we consider the situation where individuals make decision, such as what to vote for, by listening to their friends.
 
 may join what we call the Network in order to participate in a consensus protocol that will keep them synchronized with the Network. However, because the system is permissionless, processes do not know precisely which other processes belong to the Network. Nevertheless, to synchronize with the Network, a process $p_i$ selects a set of other processes $P_i$ that it believes to be synchronized with the Network, with the goal to follow what processes in $P_i$ indicate about the state of the Network. Since processes in $P_i$ may fail, $p_i$ also makes assumptions, in the form of a fail-prone system $\mathcal{F}_i$ over $P_i$, about the subset of $P_i$ that may fail together in an execution.
 
@@ -104,7 +145,7 @@ Cachin and Tackmann.
 Each fail-prone system $\mathcal{F}_i$ is a set of sets of
 processors denoting process $p_i$'s assumption about.
 
-However, 
+However,
 
 A node wants to join the Internet, but it doesn't know precisely what the
 Internet is. Thus it makes assumption about who is likely to be connected in
@@ -129,7 +170,7 @@ heterogeneous, asymmetric quorum systems like the one of Cachin seem difficult
 to deploy in a permissionless system because it is assumed that all quorums
 intersect. How is this to be achieved without prior synchronization?
 
-In contrast, The Federated Byzantine Quorum System (FBQS) model 
+In contrast, The Federated Byzantine Quorum System (FBQS) model
 
 Quorum system do not seem adapted to permissionless systems. For example,
 threshold quorum systems define quorums as set of cardinality at least... This
