@@ -25,6 +25,12 @@
 
 \maketitle
 
+\abstract{
+  Fail-prone systems capture assumptions about which processes may fail together during an execution of a distributed system, and to every fail-prone system corresponds a canonical quorum system that can be used to solve tasks such as read-write registers and consensus. A disadvantage of quorum systems is that require prior system-wide agreement on the notion of quorum, which is hard to achieve in a permissionless system. The Stellar Network offers a practical scheme to obtain a federated byzantine quorum system (FBQS for short), a type of quorum system, in a permissionless network. However, the relationship between the FBQS model and traditional quorum systems is not well-understood. In this paper we show that, similarly to traditional quorum systems, a FBQS can be understood in terms of assumptions about failures that are formalized using a fail-prone system.
+}
+
+\section{Introduction}
+
 % Following Cachin and Tackmann, we define an asymmetric fail-prone system $\mathbb{F}=\left[\mathcal{F}_1,...,\mathcal{F}_n\right]$ as a family of fail-prone systems, where the fail-prone system $\mathcal{F}_i$ is a set of sets of processes that denote the trust assumptions of process $p_i$. However, we interpret the assumption encoded by a fail-prone system differently from Cachin and Tackmann.
 
 A common problem in a distributed system is to solve a task (e.g.\ consensus) given some assumption about the possible failures that may occur. For example, one may describe possible failures using fail-prone systems. A fail-prone system $\mathcal{F}=\left\{F_1,...,F_n\right\}$ is a set of sets of processes called fail-prone sets. $\mathcal{F}$ denotes the assumption that, in a given execution, the set of processes that actually fail and collude to disrupt the system is exactly one of the $F_i$s. However, the processes do not know which one it is.
@@ -40,14 +46,15 @@ Similarly, an asymmetric quorum system is a family of quorum systems $\mathbb{Q}
 
 We could say that asymmetric quorum systems improve decentralization because there is no need to agree a-priori on the notion of quorum. However, satisfying property $Q^3(\mathcal{F})$ still requires prior coordination. Hence the question: how can a set of processes that initially have no notion of quorum system synchronize to obtain an asymmetric quorum system? Moreover, how can they do so in a decentralized manner, without using a central authority?
 
-The Stellar Network offers a practical solution to this problem.
-However, as Cachin and Tackmann observe, the asymmetric quorum-system model does not capture Stellar's Federated Byzantine Quorum System model (the FBQS model for short). In this paper, we show that, similarly to symmetric and asymmetric quorum systems, a FBQS can be understood in terms of a fail-prone system.
+The Stellar Network offers a practical solution to this problem. However, as Cachin and Tackmann observe, the asymmetric quorum-system model does not capture Stellar's Federated Byzantine Quorum System model (the FBQS model for short). In this paper, we show that, similarly to symmetric and asymmetric quorum systems, a FBQS can be understood in terms of a fail-prone system.
 
 %indeed, how are two processes that never talked to each other supposed to make failure assumptions that satisfy $Q^3(\mathcal{F})$?
 
 % In a FBQS, processes do not know who the system participants are exactly. Instead, each process $p_i$ only knows of a subset $P_i$ of the participants and makes assumptions about failures using a fail-prone system $\mathcal{F}_i$ over $P_i$. Moreover, the meaning of the fail-prone system is different from previous work: process $p_i$ assumes that, in every execution, (a) it has made accurate assumptions, i.e. the set of process that actually fail is a set $F$ such that $P_i\cap F \in\mathcal{F}_i$, (b) the processes in $P_i\setminus F$ in turn have made accurate assumptions, and (c) so on recursively.
 
-In a FBQS, processes do not know who the system participants are exactly. Instead, each process $p_i$ only knows of a subset $P_i$ of the participants and makes assumptions about failures using a fail-prone system $\mathcal{F}_i$ over $P_i$. Some processes may make wrong assumptions, and so $p_i$ does not assume that every other process's assumption satisfies some desirable properties.
+\section{Federated Fail-Prone Systems}
+
+In a FBQS, processes do not know who the system participants are exactly. Instead, each process $p_i$ only knows of a subset $P_i$ of the participants and makes assumptions about failures using a fail-prone system $\mathcal{F}_i$ over $P_i$. %Some processes may make wrong assumptions, and so $p_i$ does not assume that every other process's assumption satisfies some desirable properties.
 
 Thus, the meaning of the fail-prone system is different from previous work: process $p_i$ assumes that there is a set $I$ of processes, unknown to $p_i$, including $p_i$, such that, in every execution, every member of $I$ has made accurate assumptions; in other words, for every execution and every $p_j\in I$, the set of processes that actually fail is a set $F$ such that $P_j\cap F \in\mathcal{F}_j$.
 
