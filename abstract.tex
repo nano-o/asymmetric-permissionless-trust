@@ -109,13 +109,13 @@ Given a federated fail-prone system $\mathbb{F}$ satisfying $Q^3(\mathbb{F})$, w
   \item for every $p_j\in Q$, there is a fault-prone set $F$ of $p_j$ such that $P_j\setminus F\subseteq Q$.
 \end{enumerate}
 \end{definition}
-Note that a set $S=P_i\setminus F$ where $F\in\mathcal{F}_i$ is a quorum slice of $p_i$ in the terminology of Mazières, and thus the canonical federated quorum system for $\mathbb{F}$ is isomorphic to a FBQS as defined by Mazières.
+Note that a set $S=P_i\setminus F$ where $F\in\mathcal{F}_i$ is a quorum slice of $p_i$ in the terminology of Mazières, and a quorum $Q$ of $p_i$ in $\overline{\mathbb{F}}$ is then a quorum in Mazières terminology too, and thus canonical federated quorum systems are isomorphic to Stellar's Federated Byzantine Quorum Systems.
 
 \begin{claim}
  The canonical federated quorum system for $\mathbb{F}$, $\overline{\mathbb{F}}$, satisfies the Closure, Availability, and Consistency properties.
 \end{claim}
 \begin{proof}
-  Clearly, $\overline{\mathbb{F}}$  satisfies the Availability Property by definition. Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure Property. Finally, consider two processes $p_i$ and $p_j$ and two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$. Then,
+  Clearly, $\overline{\mathbb{F}}$  satisfies the Availability Property by definition. Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure Property. Finally, consider two processes $p_i$ and $p_j$, two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, and a fail-compatible set $A$. By Property $Q^3(\mathbb{F})$, 
 \end{proof}
 
 \section{Old stuff}
