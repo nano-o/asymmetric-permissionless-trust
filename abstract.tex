@@ -80,25 +80,21 @@ We now make two definitions that we use to define Property $Q^3(\mathbb{F})$ bel
   \end{itemize}
 \end{definition}
 
-We are now ready to define federated quorum systems for $\mathbb{F}$ and show that there exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds.
-
-
-%As should become apparent in the Consistency property of federated quorum systems state below, to stay in agreement despite this apparent problem, processes in a FBQS rely on transitive reachability across the network.
-
-
-A federated quorum system for $\mathbb{F}$ is a family of quorum systems $\mathbb{Q}=\left\{Q_1,...,Q_n\right\}$, where $Q_i$ is a quorum system over $\mathcal{P}$ for $p_i$. Moreover, $\mathbb{Q}$ must satisfy the following three properties.
+We are now ready to define federated quorum systems for $\mathbb{F}$ and show that there exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds. A federated quorum system for $\mathbb{F}$ is a family of quorum systems $\mathbb{Q}=\left\{Q_1,...,Q_n\right\}$, where $Q_i$ is a quorum system over $\mathcal{P}$ for $p_i$. Moreover, $\mathbb{Q}$ must satisfy the following three properties.
 \begin{itemize}
   \item [Closure] If $Q_i$ is a quorum of $p_i$ and $p_j\in Q_i$, then there exists a quorum $Q_j$ of $p_j$ such that $Q_j\subseteq Q_i$.\todo{needed?}
-  % \item [Availability] If $Q$ is a quorum of $p_i$ then there exists a fault-prone set $F$ of $p_i$ such that $P_i\setminus F \subseteq Q$.
-  \item [Availability] If $Q$ is a quorum of any process, then there exists a fault-prone set $F$ over $Q$ that is disjoint from $Q$.
-  \item[Consistency] If $Q_i$ is a quorum of $p_i$ and $Q_j$ is a quorum of $p_j$, if $F_i$ is a fail-prone set of over $Q_i$, if $F_j$ is a fail-prone set over $Q_j$, then there is a process $p_k\in Q_i\cap Q_j$ such that
+  % \item [Availability] If $F$ is a fail-prone set of $p_i$, then there exists a quorum $Q$ of $p_i$ such that $P_i\setminus F \subseteq Q$.
+  \item [Availability] If $F$ is a fail-prone set over $\mathcal{P}$, then there exists a quorum $Q$ of $p_i$ that is disjoint from $F$.
+  \item[Consistency] If $Q_i$ is a quorum of $p_i$ and $Q_j$ is a quorum of $p_j$, and if $A$ is a fail-compatible set, then there are two paths $x_i$ and $x_j$ in the directed graph $G_{\mathbb{F}}$ such that
     \begin{itemize}
-      \item there is a path $x_i$ in the graph $G_\mathbb{F}$ from $p_i$ to $p_k$ such that $x_i$ contains only nodes in $Q_i\setminus (F_i \cap F_j)$, and
-      \item there is a path $x_j$ in the graph $G_\mathbb{F}$ from $p_j$ to $p_k$ such that $x_j$ contains only nodes in $Q_j\setminus (F_i \cap F_j)$.
+      \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
+      \item $x_i$ is included in $Q_i\setminus A$,
+      \item $x_j$ is included in $Q_j\setminus A$, and
+      \item $x_i$ and $x_j$ intersect.
     \end{itemize}
 \end{itemize}
 
-Intuitively, the Consistency property states that not only must the quorums of two processes $p_i$ and $p_j$ intersect despite failures, but their intersection must be reachable from $p_i$ and $p_j$ despite failures.
+Intuitively, the Consistency property states that not only must the quorums of two processes $p_i$ and $p_j$ intersect despite failures, but some process in the intersection must be reachable from $p_i$ and $p_j$ despite failures.
 
 \begin{thm}
   There exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds.
@@ -106,16 +102,21 @@ Intuitively, the Consistency property states that not only must the quorums of t
 
 To prove the theorem, we first show that for every federated fail-prone system $\mathcal{F}$ satisfying $Q^3(\mathcal{F})$, there exists a canonical quorum system $\overline{\mathbb{F}}$ for $\mathbb{F}$. Second, we show that if $\mathbb{Q}$ is a federated quorum system for $\mathcal{F}$, then $Q^3(\mathcal{F})$ must hold.
 
-\begin{definition}[Canonical federeated quorum system for $\mathbb{F}$]
+\begin{definition}[Canonical federated quorum system for $\mathbb{F}$]
 Given a federated fail-prone system $\mathbb{F}$ satisfying $Q^3(\mathbb{F})$, we define $\overline{\mathbb{F}}=\left\{\mathcal{Q}_1,...,\mathcal{Q}_n\right\}$, where the set $\mathcal{Q}_i$ of quorums of $p_i$ is the biggest set such that, for every $Q\in\mathcal{Q}_i$,
 \begin{enumerate}
   \item $p_i\in Q$ and
   \item for every $p_j\in Q$, there is a fault-prone set $F$ of $p_j$ such that $P_j\setminus F\subseteq Q$.
 \end{enumerate}
 \end{definition}
+Note that a set $S=P_i\setminus F$ where $F\in\mathcal{F}_i$ is a quorum slice of $p_i$ in the terminology of Mazières, and thus the canonical federated quorum system for $\mathbb{F}$ is isomorphic to a FBQS as defined by Mazières.
 
-
-Clearly, $\overline{\mathbb{F}}$  satisfies the Availability property by definition. Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure property. Finally, consider two processes $p_i$ and $p_j$ and two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$. Then,
+\begin{claim}
+ The canonical federated quorum system for $\mathbb{F}$, $\overline{\mathbb{F}}$, satisfies the Closure, Availability, and Consistency properties.
+\end{claim}
+\begin{proof}
+  Clearly, $\overline{\mathbb{F}}$  satisfies the Availability Property by definition. Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure Property. Finally, consider two processes $p_i$ and $p_j$ and two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$. Then,
+\end{proof}
 
 \section{Old stuff}
 
