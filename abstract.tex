@@ -40,7 +40,7 @@ A common problem in a distributed system is to solve a task (e.g.\ consensus) gi
 
 A quorum system for $\mathcal{F}$ is a set of quorums, which are sets of processes, such that (a) the intersection of two quorums is not a subset of a fail-prone set and (b) for every fail-prone set $F$, there is a quorum disjoint from $F$. This guarantees that, in a given execution where the real set of processes that fail is $F\in\mathcal{F}$, every two quorums have a non-faulty member in common, and there is at least one quorum that is exclusively non-faulty. Given a quorum system, there are well-known algorithms for implementing various task, such as read-write registers or, under eventual synchrony, consensus.
 
-Hirt and Maurer show that there exists a quorum system for $\mathcal{F}$ if and only if no three fail-prone sets cover the whole system (this property is called property $Q^3(\mathcal{F})$). Moreover, every fail-prone system that satisfying $Q^3(\mathcal{F})$ determines a canonical quorum system $\overline{\mathcal{F}}$ where $Q$ is a quorum if and only if $Q$ is the complement of a fail-prone set.%$Q\in\overline{\mathcal{F}}$ if and only if there exists a fail-prone set $F\in\mathcal{F}$ such that $Q=\mathcal{P}\setminus F$.
+Hirt and Maurer show that there exists a quorum system for $\mathcal{F}$ if and only if no three fail-prone sets cover the whole system (this property is called property $Q^3(\mathcal{F})$). Moreover, every fail-prone system that satisfying $Q^3(\mathcal{F})$ determines a canonical quorum system $\overline{\mathcal{F}}$ where $Q$ is a quorum if and only if $Q$ is the complement of a fail-prone set. Thus, fail-prone systems neatly capture the space of failures can be tolerated with a quorum system, and for each such failure specification there is a natural quorum system to use.%$Q\in\overline{\mathcal{F}}$ if and only if there exists a fail-prone set $F\in\mathcal{F}$ such that $Q=\mathcal{P}\setminus F$.
 
 Cachin and Tackmann generalize fail-prone systems to asymmetric fail-prone systems, where each process makes its own assumptions about which processes may fail together. An asymmetric fail-prone system is a family of fail-prone systems $\mathbb{F}=\left\{\mathcal{F}_1,...,\mathcal{F}_n\right\}$ where $\mathcal{F}_i$ is a fail-prone system denoting the assumptions of process $p_i$.
 
@@ -57,44 +57,61 @@ The Stellar Network offers a practical solution to this problem. However, as Cac
 
 \section{Federated Quorum Systems}
 
-In a FBQS, processes do not know who the system participants are exactly. Instead, each process $p_i$ only knows of a subset $P_i$ of the participants and makes assumptions about failures using a fail-prone system $\mathcal{F}_i$ over $P_i$. Thus a federated fail-prone system as a family of fail-prone systems $\mathbb{F}=\left\{\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right\}$, and we now consider a fixed such $\mathbb{F}$.
+In a FBQS, processes do not know who the system participants are exactly.
+Instead, each process $p_i$ knows a subset $P_i$ of the participants that $p_i$ trusts to some degree to present accurate information about the rest of the system.
+However, $p_i$ trusts members of $P_i$ to the extent that they may fail, and $p_i$ makes assumptions about those failures using a fail-prone system $\mathcal{F}_i$ over $P_i$.
+Note that two processes $p_i$ and $p_j$ may have disjoint trusted sets, i.e.\ it is well possible that $P_i\cap P_j=\emptyset$.
+Thus a federated fail-prone system is an array $\mathbb{F}=\left\{\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right\}$ that associates to each $p_i$ a set of trusted peers $P_i$ and a fail-prone system $\mathcal{F}_i$ over $P_i$. Moreover, $\mathbb{F}$ must satisfy property $Q^3(\mathbb{F})$ defined below.
+We now consider a fixed such $\mathbb{F}$.
 
-The assumptions of the processes are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every $p_j\in I$, there exists $F\in\mathcal{F}_j$ such that $P_j\cap A \subseteq F$; such a set $A$ is called fail-compatible with $\mathbb{F}$.%Thus we say that a set of processes $F$ is fail-compatible with $\mathbb{F}$ whenever for every $p_i$ and $p_j$, if $P_i\cap P_j\neq \emptyset$ then $F\cap P_i\cap P_j\subseteq \mathcal{F}_i^* \cap \mathcal{F}_j^*$.
+The assumptions of the processes, embodied in $\mathbb{F}$, are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every $p_i$, there exists $F\in\mathcal{F}_i$ such that $P_i\cap A \subseteq F$; we say that such a set $A$ is fail-compatible with $\mathbb{F}$.
+
+Given a process $p_i$ and $F\in \mathcal{F}_i$, we say that $P_i\setminus F$ is a slice of $p_i$.
+Define a slice choice $\mathcal{S}$ as an array $\left[S_1,...,S_n\right]$ of slices, where, for every $i$, $S_i$ is a slice of $p_i$.
+Define a slice-choice graph $G$ as a directed graph whose nodes are processes and such that there exists a slice choice $\left[S_1,...,S_n\right]$ such that, for every $p_i$ and $p_j$, there is an edge from $p_i$ to $p_j$ whenever $p_j\in S_i$.
+Given a slice choice $\mathcal{S}=\left[S_1,...,S_n\right]$ and a set of processes $P$, we say that $P$ is closed under $\mathcal{S}$ if, for every $p_i$ in $P$, $S_i$ is a subset of $P$.
 
 % To sum up, a federated fail-prone system as a family of fail-prone systems $\mathbb{F}=\left\{\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right\}$ where $P_i$ is the set of processes that $p_i$ knows of and $\mathcal{F}_i$ is a fail-prone system over $P_i$ that denotes the assumptions that $p_i$ makes about the possible failures of members of $P_i$.
 
-Note that two processes $p_i$ and $p_j$ may not even know of a common third process, i.e.\ it is well possible that $P_i\cap P_j=\emptyset$. As should become apparent in definition of Property $Q^3(\mathbb{F})$ below, to stay in agreement despite this apparent problem, processes in a FBQS rely on a transitive reachability property that must hold despite failures.
+% Note that two processes $p_i$ and $p_j$ may not even know of a common third process, i.e.\ it is well possible that $P_i\cap P_j=\emptyset$.
+% As should become apparent in definition of Property $Q^3(\mathbb{F})$ below, to stay in agreement despite this apparent problem, processes in a FBQS rely on a transitive reachability property that must hold despite failures.
 
-We now make two definitions that we use to define Property $Q^3(\mathbb{F})$ below. Define the directed graph $G_\mathbb{F}$ over processes such that there is an edge from $p_i$ to $p_j$ if and only if $p_j\in P_i$. Given a set of processes $S$, a fail-prone set over $S$ is a set of processes obtained by taking the union over all processes in $S$ of one fail-prone set per process. Formally, $T$ is a fail-prone set over $S$ if and only if there exists a family of fail-prone sets $\left\{F_1,...,F_n\right\}$ such that (a), for every $p_i\in S$, $F_i\in \mathcal{F}_i$ and (b) $T=\bigcup_{p_i\in S} F_i$.
+% We now make two definitions that we use to define Property $Q^3(\mathbb{F})$ below. Define the directed graph $G_\mathbb{F}$ over processes such that there is an edge from $p_i$ to $p_j$ if and only if $p_j\in P_i$. Given a set of processes $S$, a fail-prone set over $S$ is a set of processes obtained by taking the union over all processes in $S$ of one fail-prone set per process. Formally, $T$ is a fail-prone set over $S$ if and only if there exists a family of fail-prone sets $\left\{F_1,...,F_n\right\}$ such that (a), for every $p_i\in S$, $F_i\in \mathcal{F}_i$ and (b) $T=\bigcup_{p_i\in S} F_i$.
 
 % Let $G_\mathbb{F}^*$ be the transitive closure of $G_\mathbb{F}$, i.e. $G_\mathbb{F}^*(p_i)$ is the set of processes reachable from $p_i$ in $G_\mathbb{F}$.
 
 % To define a federated quorum systems for a fail-prone system $\mathbb{F}=\left\{\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right\}$, we first need the notion of fail-prone set over a subset $S$ of the processes. Given a set of processes $S$, a fail-prone set over $S$ is a set of processes obtained by taking the union over all processes in $S$ of one fail-prone set per process. Formally, $T$ is a fail-prone set over $S$ if and only if there exists a family of fail-prone sets $\left\{F_1,...,F_n\right\}$ such that (a), for every $p_i\in S$, $F_i\in \mathcal{F}_i$ and (b) $T=\bigcup_{p_i\in S} F_i$.
 
+Given the above preliminary definitions, we know define property $Q^3(\mathbb{F})$ for federated fail-prone systems. This generalizes property $Q^3$ of fail-prone systems and asymmetric fail-prone systems.\todo{Is this a generalization in the sense that symmetric fail-prone systems are a special case? It seems to be a true generalization.}
+
 \begin{definition}[Property $Q^3(\mathbb{F})$]
-  Property $Q^3(\mathbb{F})$ holds if and only if for every two processes $p_i$ and $p_j$, for every fail-prone set $F$ over $\mathcal{P}$, and for every fail-compatible set $A$, there exist two paths $x_i$ and $x_j$ in the directed graph $G_{\mathbb{F}}$ such that:
+  Property $Q^3(\mathbb{F})$ holds if and only if for every two processes $p_i$ and $p_j$, for every slice-choice graph $G$, for every fail-compatible set $A$, there exist two paths $x_i$ and $x_j$ in $G$ such that:
   \begin{itemize}
     \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
     \item $x_i$ and $x_j$ intersect, and
-    \item neither $x_i$ nor $x_j$ intersects $F\cup A$.
+    \item neither $x_i$ nor $x_j$ intersects $A$.
   \end{itemize}
 \end{definition}
 
-We are now ready to define federated quorum systems for $\mathbb{F}$ and show that there exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds. A federated quorum system for $\mathbb{F}$ is a family of quorum systems $\mathbb{Q}=\left\{Q_1,...,Q_n\right\}$, where $Q_i$ is a quorum system over $\mathcal{P}$ for $p_i$. Moreover, $\mathbb{Q}$ must satisfy the following three properties.
+Informally, Property $Q^3(\mathbb{F})$ captures the essence of the assumptions made by processes in a federated fail-prone system, i.e.\ that for every possible slice-choice graph, two processes can reach a common third process despite any failures compatible with the processes' failure assumptions.
+
+Also note that, having defined Property $Q^3(\mathbb{F})$ as above, fail-prone systems and asymmetric fail-prone systems are a special case of federated fail-prone systems.\todo{Provide an explanation.}
+
+We are now ready to define federated quorum systems for $\mathbb{F}$ and show that there exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds. A federated quorum system for $\mathbb{F}$ is a family of quorum systems $\mathbb{Q}=\left\{Q_1,...,Q_n\right\}$, where $Q_i\subseteq 2^\mathcal{P}$ is a quorum system for $p_i$. Moreover, $\mathbb{Q}$ must satisfy the following three properties.
 \begin{itemize}
   \item [Closure] If $Q_i$ is a quorum of $p_i$ and $p_j\in Q_i$, then there exists a quorum $Q_j$ of $p_j$ such that $Q_j\subseteq Q_i$.\todo{needed?}
   % \item [Availability] If $F$ is a fail-prone set of $p_i$, then there exists a quorum $Q$ of $p_i$ such that $P_i\setminus F \subseteq Q$.
   \item [Availability] For every fail-compatible set $A$ and for every process $p_i$, there exists a quorum $Q$ of $p_i$ that is disjoint from $A$.
-  \item[Consistency] If $Q_i$ is a quorum of $p_i$ and $Q_j$ is a quorum of $p_j$, and if $A$ is a fail-compatible set, then there are two paths $x_i$ and $x_j$ in the directed graph $G_{\mathbb{F}}$ such that
+  \item[Consistency] If $Q_i$ is a quorum of $p_i$ and $Q_j$ is a quorum of $p_j$, if $\mathcal{S}$ is a slice choice such that $Q_i\cup Q_j$ is closed under $\mathcal{S}$, and if $A$ is a fail-compatible set, then there are two paths $x_i$ and $x_j$ in the slice-choice graph $G$ corresponding to $\mathcal{S}$ such that
     \begin{itemize}
       \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
-      \item $x_i$ is included in $Q_i\setminus A$,
+      \item $x_i$ is included in $Q_i\setminus A$,\todo{why must the path stay in $Q_i$?}
       \item $x_j$ is included in $Q_j\setminus A$, and
       \item $x_i$ and $x_j$ intersect.
     \end{itemize}
 \end{itemize}
 
-Intuitively, the Consistency property states that not only must the quorums of two processes $p_i$ and $p_j$ intersect despite failures, but some process in the intersection must be reachable from $p_i$ and $p_j$ despite failures.
+Informally, the Consistency property states that not only must the quorums of two processes $p_i$ and $p_j$ intersect despite failures, but some process in the intersection must be reachable from $p_i$ and $p_j$ despite failures.
 
 \begin{thm}
   There exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds.
@@ -115,7 +132,7 @@ Note that a set $S=P_i\setminus F$ where $F\in\mathcal{F}_i$ is a quorum slice o
  The canonical federated quorum system for $\mathbb{F}$, $\overline{\mathbb{F}}$, satisfies the Closure, Availability, and Consistency properties.
 \end{claim}
 \begin{proof}
-  Clearly, $\overline{\mathbb{F}}$  satisfies the Availability Property by definition. Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure Property. Finally, consider two processes $p_i$ and $p_j$, two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, and a fail-compatible set $A$. By Property $Q^3(\mathbb{F})$, 
+  Clearly, $\overline{\mathbb{F}}$  satisfies the Availability Property by definition. Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure Property. Finally, consider two processes $p_i$ and $p_j$, two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, and a fail-compatible set $A$. By Property $Q^3(\mathbb{F})$,
 \end{proof}
 
 \section{Old stuff}
