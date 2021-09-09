@@ -99,8 +99,7 @@ Also note that, having defined Property $Q^3(\mathbb{F})$ as above, fail-prone s
 
 We are now ready to define federated quorum systems for $\mathbb{F}$ and show that there exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds. A federated quorum system for $\mathbb{F}$ is a family of quorum systems $\mathbb{Q}=\left\{Q_1,...,Q_n\right\}$, where $Q_i\subseteq 2^\mathcal{P}$ is a quorum system for $p_i$. Moreover, $\mathbb{Q}$ must satisfy the following three properties.
 \begin{itemize}
-  \item [Closure] If $Q_i$ is a quorum of $p_i$ and $p_j\in Q_i$, then there exists a quorum $Q_j$ of $p_j$ such that $Q_j\subseteq Q_i$.\todo{needed?}
-  % \item [Availability] If $F$ is a fail-prone set of $p_i$, then there exists a quorum $Q$ of $p_i$ such that $P_i\setminus F \subseteq Q$.
+  % \item [Closure] If $Q_i$ is a quorum of $p_i$ and $p_j\in Q_i$, then there exists a quorum $Q_j$ of $p_j$ such that $Q_j\subseteq Q_i$.
   \item [Availability] For every fail-compatible set $A$ and for every process $p_i$, there exists a quorum $Q$ of $p_i$ that is disjoint from $A$.
   \item[Consistency] If $Q_i$ is a quorum of $p_i$ and $Q_j$ is a quorum of $p_j$, if $\mathcal{S}$ is a slice choice such that $Q_i\cup Q_j$ is closed under $\mathcal{S}$, and if $A$ is a fail-compatible set, then there are two paths $x_i$ and $x_j$ in the slice-choice graph $G$ corresponding to $\mathcal{S}$ such that
     \begin{itemize}
@@ -126,15 +125,15 @@ To prove the theorem, we first show that for every federated fail-prone system $
   \end{enumerate}
 \end{definition}
 
-Note that if we identify the notion of slice with the notion of quorum slice of Mazières, then the definition of quorums above coincides with Mazières' definition; thus a canonical federated quorum systems is isomorphic to a Federated Byzantine Quorum System as defined by Mazières.\todo{what about the projection business?}
+Note that if we identify the notion of slice with the notion of quorum slice of Mazières, then the definition of quorums above coincides with Mazières' definition; thus a canonical federated quorum systems is isomorphic to a Federated Byzantine Quorum System as defined by Mazières.
 
 \begin{claim}
- $\overline{\mathbb{F}}$, the canonical federated quorum system for $\mathbb{F}$, satisfies the Closure, Availability, and Consistency properties.
+ $\overline{\mathbb{F}}$, the canonical federated quorum system for $\mathbb{F}$, satisfies the Availability and Consistency properties.
 \end{claim}
 \begin{proof}
   $\overline{\mathbb{F}}$ satisfies the Availability Property by definition of $\overline{\mathbb{F}}$ because, given a fail-compatible set $A$, we can construct a quorum containing all nodes: by definition of fail-compatible, for every $p_i$ there exists a slice of $p_i$ that is disjoint from $A$. Let the array $\left[S_1,...,S_n\right]$ identify one such slice per process. Now the union of all the slices in the array is by definition a quorum for every process and it is disjoint from $A$.
 
-  Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then we immediately have, by definition of $\overline{\mathbb{F}}$, that $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure Property.
+  % Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then we immediately have, by definition of $\overline{\mathbb{F}}$, that $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure Property.
 
   Finally, consider two processes $p_i$ and $p_j$, two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, a slice-choice $\mathcal{S}$ such that $Q_i\cup Q_j$ is closed under $\mathcal{S}$, and a fail-compatible set $A$. By Property $Q^3(\mathbb{F})$, we immediately obtain two paths $x_i$ and $x_j$ in the slice-choice graph $G$ corresponding to $\mathcal{S}$ such that
     \begin{itemize}
