@@ -84,7 +84,7 @@ We are now ready to define federated quorum systems for $\mathbb{F}$ and show th
 \begin{itemize}
   \item [Closure] If $Q_i$ is a quorum of $p_i$ and $p_j\in Q_i$, then there exists a quorum $Q_j$ of $p_j$ such that $Q_j\subseteq Q_i$.\todo{needed?}
   % \item [Availability] If $F$ is a fail-prone set of $p_i$, then there exists a quorum $Q$ of $p_i$ such that $P_i\setminus F \subseteq Q$.
-  \item [Availability] If $F$ is a fail-prone set over $\mathcal{P}$, then there exists a quorum $Q$ of $p_i$ that is disjoint from $F$.
+  \item [Availability] For every fail-compatible set $A$ and for every process $p_i$, there exists a quorum $Q$ of $p_i$ that is disjoint from $A$.
   \item[Consistency] If $Q_i$ is a quorum of $p_i$ and $Q_j$ is a quorum of $p_j$, and if $A$ is a fail-compatible set, then there are two paths $x_i$ and $x_j$ in the directed graph $G_{\mathbb{F}}$ such that
     \begin{itemize}
       \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
