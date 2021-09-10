@@ -114,7 +114,7 @@ Given a slice choice $\mathcal{S}=\left[S_1,...,S_n\right]$ and a set of process
 %Given the above preliminary definitions, we now define property $Q^3(\mathbb{F})$ for federated fail-prone systems.
 Next, we define property $Q^3(\mathbb{F})$ for federated fail-prone systems, whose vocation is to be a generalization of the same property for quorum system.
 \begin{definition}[Property $Q^3(\mathbb{F})$]
-  Property $Q^3(\mathbb{F})$ holds if and only if for every two processes $p_i$ and $p_j$, for every slice-choice graph $G$, for every fail-compatible set $A$, there exist two paths $x_i$ and $x_j$ in $G$ such that:
+  Property $Q^3(\mathbb{F})$ holds if and only if for every two processes $p_i$ and $p_j$, for every two slice-choice graphs $G_i$ and $G_j$, for every fail-compatible set $A$, there exist a path $x_i$ in $G_i$ and a path $x_j$ in $G_j$ such that:
   \begin{itemize}
     \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
     \item $x_i$ and $x_j$ intersect, and
@@ -122,21 +122,26 @@ Next, we define property $Q^3(\mathbb{F})$ for federated fail-prone systems, who
   \end{itemize}
 \end{definition}
 
-Informally, Property $Q^3(\mathbb{F})$ captures the essence of the assumptions made by processes in a federated fail-prone system, i.e.\ that for every possible slice-choice graph, two processes can transitively reach a common third process despite any failures compatible with the processes' failure assumptions.
+Informally, Property $Q^3(\mathbb{F})$ captures the essence of the assumptions made by processes in a federated fail-prone system, i.e.\ that two processes can always transitively hear from a third common process despite any failures compatible with the processes' failure assumptions.
 
 Also note that, having defined Property $Q^3(\mathbb{F})$ as above, fail-prone systems and asymmetric fail-prone systems are a special case of federated fail-prone systems. We will prove this fact in a full version of this paper.
 
-We are now ready to define federated quorum systems for $\mathbb{F}$ and show that there exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds. A federated quorum system for $\mathbb{F}$ is an array of quorum systems $\mathbb{Q}=\left[Q_1,...,Q_n\right]$, where $Q_i\subseteq 2^\mathcal{P}$ is a quorum system for $p_i$. Moreover, $\mathbb{Q}$ must satisfy the following two properties.
-\begin{itemize}
-  % \item [Closure] If $Q_i$ is a quorum of $p_i$ and $p_j\in Q_i$, then there exists a quorum $Q_j$ of $p_j$ such that $Q_j\subseteq Q_i$.
-  \item [Availability] For every fail-compatible set $A$ and for every process $p_i$, there exists a quorum $Q$ of $p_i$ that is disjoint from $A$.
-  \item[Consistency] If $Q_i$ is a quorum of $p_i$ and $Q_j$ is a quorum of $p_j$, if $\mathcal{S}$ is a slice choice such that $Q_i\cup Q_j$ is closed under $\mathcal{S}$, and if $A$ is a fail-compatible set, then there are two paths $x_i$ and $x_j$ in the slice-choice graph $G$ corresponding to $\mathcal{S}$ such that
-    \begin{itemize}
-      \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
-      \item $x_i$ and $x_j$ consists exclusively of processes in $\left(Q_i\cup Q_j\right)\setminus A$,
-      \item $x_i$ and $x_j$ intersect.
-    \end{itemize}
-\end{itemize}
+We are now ready to define federated quorum systems for $\mathbb{F}$ and show that there exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds.
+
+\begin{definition}[Federated Quorum System for $\mathbb{F}$]
+  A federated quorum system for $\mathbb{F}$ is an array of quorum systems $\mathbb{Q}=\left[Q_1,...,Q_n\right]$, where $Q_i\subseteq 2^\mathcal{P}$ is a quorum system for $p_i$. Moreover, $\mathbb{Q}$ must satisfy the following two properties.
+  \begin{itemize}
+    % \item [Closure] If $Q_i$ is a quorum of $p_i$ and $p_j\in Q_i$, then there exists a quorum $Q_j$ of $p_j$ such that $Q_j\subseteq Q_i$.
+    \item [Availability] For every fail-compatible set $A$ and for every process $p_i$, there exists a quorum $Q$ of $p_i$ that is disjoint from $A$.
+    \item[Consistency] If $Q_i$ is a quorum of $p_i$ and $Q_j$ is a quorum of $p_j$, if $\mathcal{S}_i$ is a slice choice such that $Q_i$ is closed under $\mathcal{S}_i$, if $\mathcal{S}_j$ is a slice choice such that $Q_j$ is closed under $\mathcal{S}_j$, and if $A$ is a fail-compatible set, then there is a path $x_i$ in the slice-choice graph $G_i$ corresponding to $\mathcal{S}_i$ and a path $x_j$ in the slice-choice graph $G_j$ corresponding to $\mathcal{S}_j$ such that
+      \begin{itemize}
+        \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
+        \item $x_i$ consists exclusively of processes in $Q_i\setminus A$,
+        \item $x_j$ consists exclusively of processes in $Q_j\setminus A$,
+        \item $x_i$ and $x_j$ intersect.
+      \end{itemize}
+  \end{itemize}
+\end{definition}
 
 Informally, the Consistency property states that not only must the quorums of two processes $p_i$ and $p_j$ intersect despite failures, but some process in the intersection must be reachable from $p_i$ and $p_j$ despite failures.
 
@@ -164,35 +169,41 @@ Note that if we identify the notion of slice with the notion of quorum slice of 
 
   % Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then we immediately have, by definition of $\overline{\mathbb{F}}$, that $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure Property.
 
-  Finally, consider two processes $p_i$ and $p_j$, two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, a slice-choice $\mathcal{S}$ such that $Q_i\cup Q_j$ is closed under $\mathcal{S}$, and a fail-compatible set $A$. By Property $Q^3(\mathbb{F})$, we immediately obtain two paths $x_i$ and $x_j$ in the slice-choice graph $G$ corresponding to $\mathcal{S}$ such that
+  To show that $\overline{\mathbb{F}}$ satisfies the Consistency property, consider two processes $p_i$ and $p_j$, two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, a slice choice $\mathcal{S}_i$ such that $Q_i$ is closed under $\mathcal{S}_i$, a slice choice $\mathcal{S}_j$ such that $Q_j$ is closed under $\mathcal{S}_j$, and a fail-compatible set $A$. By Property $Q^3(\mathbb{F})$, we immediately obtain a path $x_i$ in the slice-choice graph $G_i$ corresponding to $\mathcal{S}_i$ and a path $x_j$ in the slice-choice graph $G_j$ corresponding to $\mathcal{S}_j$ such that
     \begin{itemize}
       \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
       \item $x_i$ and $x_j$ intersect, and
-      \item neither $x_i$ and $x_j$ are disjoint from $A$.
+      \item both $x_i$ and $x_j$ are disjoint from $A$.
     \end{itemize}
-    Thus, to show that $\overline{\mathbb{F}}$ satisfies the Consistency property, it remains to show that $x_i$ consists exclusively of processes in $Q_i\cup Q_j$. This is the case because $Q_i\cup Q_j$ is closed under the slice-choice $\mathcal{S}$, and thus no path in $G$ that starts in $Q_i\cup Q_j$ can exit $Q_i\cup Q_j$.
+    Thus, to show that $\overline{\mathbb{F}}$ satisfies the Consistency property, it remains to show that $x_i$ consists exclusively of processes in $Q_i$ and $x_j$ consists exclusively of processes in $Q_j$.
+    The path $x_i$ consists exclusively of processes in $Q_i$ because $Q_i$ is closed under the slice-choice $\mathcal{S}_i$, and thus no path in $G_i$ that starts in $Q_i$ can exit $Q_i$.
+    For the same reason, $x_j$ consists exclusively of processes in $Q_j$.
 \end{proof}
 
 \begin{claim}
   If $\mathbb{Q}$ is a federated quorum system for $\mathbb{F}$ that satisfies the Availability property and $\mathbb{F}$ does not satisfy $Q^3(\mathbb{F})$, then $\mathbb{Q}$ does not satisfy the Consistency property.
 \end{claim}
 \begin{proof}
-  By the assumption that $\mathbb{F}$ does not satisfy $Q^3(\mathbb{F})$, there are two processes $p_i$ and $p_j$, a slice-choice graph $G$, and a fail-compatible set $A$, such that there are no paths $x_i$ and $x_j$ such that:
+  By the assumption that $\mathbb{F}$ does not satisfy $Q^3(\mathbb{F})$, there are two processes $p_i$ and $p_j$, two slice-choice graph $G_i$ and $G_j$, and a fail-compatible set $A$, such that there are no paths $x_i$ in $G_i$ and $x_j$ in $G_j$ such that:
   \begin{enumerate}
     \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
     \item $x_i$ and $x_j$ intersect, and
     \item both $x_i$ and $x_j$ are disjoint from $A$.
   \end{enumerate}
-  Moreover, consider the slice choice array $\mathcal{S}=\left[S_1,...,S_n\right]$ corresponding to the slice-choice graph $G$.
-  Consider $Q=\bigcup_{i\in 1..n}S_i$. By definition, $Q$ is a quorum of both $p_i$ and $p_j$.
-  Now suppose by contradiction that $\mathbb{Q}$ satisfies the Consistency property. Then there are two paths $x_i'$ and $x_j'$ in the slice-choice graph $G$ corresponding to $\mathcal{S}$ such that
+  Now consider the slice choice array $\mathcal{S}_i=\left[S_1^i,...,S_n^i\right]$ corresponding to the slice-choice graph $G_i$ and the slice choice array $\mathcal{S}_j=\left[S_1^j,...,S_n^j\right]$ corresponding to the slice-choice graph $G_j$.
+  Consider $Q_i=\bigcup_{k\in 1..n}S_k^i$ and $Q_j=\bigcup_{k\in 1..n}S_k^j$. By definition, both $Q_i$ and $Q_j$ are quorums for all processes. %is a quorum of both $p_i$ and $Q_j$ is a quorum of $p_j$.
+  Now suppose by contradiction that $\mathbb{Q}$ satisfies the Consistency property. 
+  Then, by definition of Consistency, there is a path $x_i'$ in the slice-choice graph $G_i$ and a path $x_j'$ in the slice-choice graph $G_j$ such that
   \begin{itemize}
     \item $x_i'$ starts at $p_i$ and $x_j$ starts at $p_j$,
-    \item $x_i'$ and $x_j'$ consists exclusively of processes in $Q\setminus A$,
+    \item $x_i'$ consists exclusively of processes in $Q_i\setminus A$,
+    \item $x_j'$ consists exclusively of processes in $Q_j\setminus A$,
     \item $x_i'$ and $x_j'$ intersect.
   \end{itemize}
   Then $x_i'$ and $x_j'$ satisfy Items 1, 2 and 3 above, which is a contradiction. Thus $\mathbb{Q}$ does not satisfy the Consistency property.
 \end{proof}
+
+Finally, to conclude, Claims 1 and 2 together imply our main result, Theorem 1.
 
 \printbibliography
 
