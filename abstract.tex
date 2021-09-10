@@ -10,7 +10,7 @@
   colorlinks=false,
 }
 \usepackage{cleveref}
-% \usepackage{todonotes}
+\usepackage[disable]{todonotes}
 
 \usepackage{biblatex}
 \addbibresource{library.bib}
@@ -39,6 +39,8 @@ In practice, the Stellar Network solves this problem by allowing participants to
 However, the relationship between Stellar's model and traditional quorum systems is not well-understood.
 In this paper we cast new light on the Stellar model by showing that, similarly to traditional quorum systems, Stellar's Federated Byzantine Quorum Systems correspond to assumptions about failures that are formalized using a new form of fail-prone system.
 }
+
+\todo[inline]{There is an issue with a node always belonging to its slices. This cannot represent classic quorum systems because a process cannot have a quorum that does not include itself.}
 
 \section{Introduction}
 
@@ -124,7 +126,7 @@ Next, we define property $Q^3(\mathbb{F})$ for federated fail-prone systems, who
 
 Informally, Property $Q^3(\mathbb{F})$ captures the essence of the assumptions made by processes in a federated fail-prone system, i.e.\ that two processes can always transitively hear from a third common process despite any failures compatible with the processes' failure assumptions.
 
-Also note that, having defined Property $Q^3(\mathbb{F})$ as above, fail-prone systems and asymmetric fail-prone systems are a special case of federated fail-prone systems. We will prove this fact in a full version of this paper.
+% Also note that, having defined Property $Q^3(\mathbb{F})$ as above, fail-prone systems and asymmetric fail-prone systems are a special case of federated fail-prone systems. We will prove this fact in a full version of this paper.
 
 We are now ready to define federated quorum systems for $\mathbb{F}$ and show that there exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds.
 
@@ -132,7 +134,7 @@ We are now ready to define federated quorum systems for $\mathbb{F}$ and show th
   A federated quorum system for $\mathbb{F}$ is an array of quorum systems $\mathbb{Q}=\left[Q_1,...,Q_n\right]$, where $Q_i\subseteq 2^\mathcal{P}$ is a quorum system for $p_i$. Moreover, $\mathbb{Q}$ must satisfy the following two properties.
   \begin{itemize}
     % \item [Closure] If $Q_i$ is a quorum of $p_i$ and $p_j\in Q_i$, then there exists a quorum $Q_j$ of $p_j$ such that $Q_j\subseteq Q_i$.
-    \item [Availability] For every fail-compatible set $A$ and for every process $p_i$, there exists a quorum $Q$ of $p_i$ that is disjoint from $A$.
+    \item [Availability] For every slice-choice graph $G$ and for every process $p_i$, the set of processes reachable from $p_i$ in $G$ contains a quorum of $p_i$.
     \item[Consistency] If $Q_i$ is a quorum of $p_i$ and $Q_j$ is a quorum of $p_j$, if $\mathcal{S}_i$ is a slice choice such that $Q_i$ is closed under $\mathcal{S}_i$, if $\mathcal{S}_j$ is a slice choice such that $Q_j$ is closed under $\mathcal{S}_j$, and if $A$ is a fail-compatible set, then there is a path $x_i$ in the slice-choice graph $G_i$ corresponding to $\mathcal{S}_i$ and a path $x_j$ in the slice-choice graph $G_j$ corresponding to $\mathcal{S}_j$ such that
       \begin{itemize}
         \item $x_i$ starts at $p_i$ and $x_j$ starts at $p_j$,
@@ -143,13 +145,13 @@ We are now ready to define federated quorum systems for $\mathbb{F}$ and show th
   \end{itemize}
 \end{definition}
 
-Informally, the Consistency property states that not only must the quorums of two processes $p_i$ and $p_j$ intersect despite failures, but some process in the intersection must be reachable from $p_i$ and $p_j$ despite failures.
+Informally, the Consistency property states that not only must two quorums of two processes $p_i$ and $p_j$ intersect, but some process in the intersection must be reachable from $p_i$ and $p_j$ despite failures.
 
 \begin{thm}
   There exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds.
 \end{thm}
 
-To prove the theorem, we first show that for every federated fail-prone system $\mathcal{F}$ satisfying $Q^3(\mathcal{F})$, there exists a canonical quorum system $\overline{\mathbb{F}}$ for $\mathbb{F}$. Second, we show that if $\mathbb{Q}$ is a federated quorum system for $\mathcal{F}$, then $Q^3(\mathcal{F})$ must hold.
+To prove the theorem, we first show that for every federated fail-prone system $\mathbb{F}$ satisfying $Q^3(\mathbb{F})$, there exists a canonibb quorum system $\overline{\mathbb{F}}$ for $\mathbb{F}$. Second, we show that if $\mathbb{Q}$ is a federated quorum system for $\mathbb{F}$, then $Q^3(\mathbb{F})$ must hold.
 
 \begin{definition}[Canonical federated quorum system for $\mathbb{F}$]
   Given a federated fail-prone system $\mathbb{F}$ satisfying $Q^3(\mathbb{F})$, we define $\overline{\mathbb{F}}=\left[\mathcal{Q}_1,...,\mathcal{Q}_n\right]$, where the set $\mathcal{Q}_i$ of quorums of $p_i$ is the biggest set such that, for every $Q\in\mathcal{Q}_i$,
@@ -165,7 +167,7 @@ Note that if we identify the notion of slice with the notion of quorum slice of 
  $\overline{\mathbb{F}}$, the canonical federated quorum system for $\mathbb{F}$, satisfies the Availability and Consistency properties.
 \end{claim}
 \begin{proof}
-  $\overline{\mathbb{F}}$ satisfies the Availability Property by definition of $\overline{\mathbb{F}}$ because, given a fail-compatible set $A$, we can construct a quorum containing all nodes: by definition of fail-compatible, for every $p_i$ there exists a slice of $p_i$ that is disjoint from $A$. Let the array $\left[S_1,...,S_n\right]$ identify one such slice per process. Now the union of all the slices in the array is by definition a quorum for every process and it is disjoint from $A$.
+  $\overline{\mathbb{F}}$ satisfies the Availability Property because for every process $p_i$ and every slice-choice graph $G$, by definition of $\overline{\mathbb{F}}$, the set of processes reachable from $p_i$ is a quorum.
 
   % Moreover, observe that if $Q$ is a quorum of $p_i$ and $p_j\in Q$, then we immediately have, by definition of $\overline{\mathbb{F}}$, that $Q$ is also a quorum of $p_j$; thus $\overline{\mathbb{F}}$ satisfies the Closure Property.
 
@@ -190,9 +192,8 @@ Note that if we identify the notion of slice with the notion of quorum slice of 
     \item $x_i$ and $x_j$ intersect, and
     \item both $x_i$ and $x_j$ are disjoint from $A$.
   \end{enumerate}
-  Now consider the slice choice array $\mathcal{S}_i=\left[S_1^i,...,S_n^i\right]$ corresponding to the slice-choice graph $G_i$ and the slice choice array $\mathcal{S}_j=\left[S_1^j,...,S_n^j\right]$ corresponding to the slice-choice graph $G_j$.
-  Consider $Q_i=\bigcup_{k\in 1..n}S_k^i$ and $Q_j=\bigcup_{k\in 1..n}S_k^j$. By definition, both $Q_i$ and $Q_j$ are quorums for all processes. %is a quorum of both $p_i$ and $Q_j$ is a quorum of $p_j$.
-  Now suppose by contradiction that $\mathbb{Q}$ satisfies the Consistency property. 
+  Now consider the set of processes $X_i$ reachable in $G_i$ from $p_i$ and the set of processes $X_j$ reachable in $G_j$ from $p_j$. By the availability property, $X_i$ contains a quorum $Q_i$ of $p_i$ and $X_j$ contains a quorum $Q_j$ of $p_j$.
+  Now suppose by contradiction that $\mathbb{Q}$ satisfies the Consistency property.
   Then, by definition of Consistency, there is a path $x_i'$ in the slice-choice graph $G_i$ and a path $x_j'$ in the slice-choice graph $G_j$ such that
   \begin{itemize}
     \item $x_i'$ starts at $p_i$ and $x_j$ starts at $p_j$,
