@@ -10,7 +10,8 @@
   colorlinks=false,
 }
 \usepackage{cleveref}
-\usepackage[disable]{todonotes}
+% \usepackage[disable]{todonotes}
+\usepackage{todonotes}
 
 \usepackage{biblatex}
 \addbibresource{library.bib}
@@ -93,12 +94,12 @@ Our result sheds new light on the mathematical foundations of the Federated Byza
 
 We consider a set of processes $\mathcal{P}$ where individual processes do not know what $\mathcal{P}$ is exactly.
 Instead, each process $p_i$ knows a subset $P_i$ of the participants (where $p_i\not\in P_i$) that $p_i$ trusts to present accurate information about the rest of the system.
-However, $p_i$ trusts members of $P_i$ only to the extent that they do not fail, and $p_i$ makes assumptions about those failures using a fail-prone system $\mathcal{F}_i$ over $P_i$ (i.e.\ $\mathcal{F}_i\in 2^{P_i}$).
+However, $p_i$ trusts members of $P_i$ only to the extent that they do not fail, and $p_i$ makes assumptions about those failures using a fail-prone system $\mathcal{F}_i$ over $P_i$ (i.e.\ $\mathcal{F}_i\subseteq 2^{P_i}$).
 
 We capture the setting described above with the notion of federated fail-prone system. A federated fail-prone system is an array $\mathbb{F}=\left[\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right]$ that associates to each process $p_i$ a set of trusted peers $P_i$ and a fail-prone system $\mathcal{F}_i$ over $P_i$. %Moreover, $\mathbb{F}$ must satisfy property $Q^3(\mathbb{F})$ defined below.
 We now consider a fixed such $\mathbb{F}$.
 
-The assumptions of the processes, as embodied in $\mathbb{F}$, are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every $p_i$, there exists $F\in\mathcal{F}_i$ such that $P_i\cap A \subseteq F$; we say that such a set $A$ is fail-compatible with $\mathbb{F}$.
+The assumptions of the processes, as embodied in $\mathbb{F}$, are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every process $p_i$ not in $A$, there exists $F\in\mathcal{F}_i$ such that $P_i\cap A \subseteq F$; we say that such a set $A$ is fail-compatible with $\mathbb{F}$.
 
 Note that two processes $p_i$ and $p_j$ may have disjoint trusted sets, i.e.\ it is well possible that $P_i\cap P_j=\emptyset$. This may seem to be an insurmountable problem in e.g.\ a consensus algorithm: how are processes supposed to remain in agreement despite not having any peer in common? Informally, the answer is that processes will take advantage of a form of transitive reachability across the system, whose precise meaning is captured in property $Q^3(\mathbb{F})$ of federated fail-prone systems, defined below.
 
@@ -151,7 +152,7 @@ We are now ready to define federated quorum systems for $\mathbb{F}$ and show th
   \end{itemize}
 \end{definition}
 
-Informally, the Consistency property states that not only must two quorums of two processes $p_i$ and $p_j$ intersect, but some process in the intersection must be reachable from $p_i$ and $p_j$ despite failures.
+Informally, the Consistency property states that not only must two quorums of two processes $p_i$ and $p_j$ intersect, but some process in the intersection must be reachable, in a peer-to-peer fashion, from both $p_i$ and $p_j$ and despite failures.
 
 \begin{thm}
   There exists a federated quorum system for $\mathbb{F}$ if and only if $Q^3(\mathbb{F})$ holds.
@@ -160,14 +161,21 @@ Informally, the Consistency property states that not only must two quorums of tw
 To prove the theorem, we first show that for every federated fail-prone system $\mathbb{F}$ satisfying $Q^3(\mathbb{F})$, there exists a canonical quorum system $\overline{\mathbb{F}}$ for $\mathbb{F}$. Second, we show that if $\mathbb{Q}$ is a federated quorum system for $\mathbb{F}$, then $Q^3(\mathbb{F})$ must hold.
 
 \begin{definition}[Canonical federated quorum system for $\mathbb{F}$]
-  Given a federated fail-prone system $\mathbb{F}$ satisfying $Q^3(\mathbb{F})$, we define $\overline{\mathbb{F}}=\left[\mathcal{Q}_1,...,\mathcal{Q}_n\right]$, where the set $\mathcal{Q}_i$ of quorums of $p_i$ is the biggest set such that, for every $Q\in\mathcal{Q}_i$,
+  \label{def:canonical}
+  Given a federated fail-prone system $\mathbb{F}$, we define $\overline{\mathbb{F}}=\left[\mathcal{Q}_1,...,\mathcal{Q}_n\right]$, where the set $\mathcal{Q}_i$ of quorums of $p_i$ is the biggest set such that, for every $Q\in\mathcal{Q}_i$,
   \begin{enumerate}
     \item $p_i$ has a slice that is a subset of $Q$, and
-    \item for every $p_j\in Q$, $p_j$ has a slice that is a subset of $Q$.%(i.e.\ there is a fault-prone set $F$ of $p_j$ such that $P_j\setminus F\subseteq Q$).
+    \item there is a fail-compatible set $A$ such that, for every process $p_j\in Q\setminus A$, $p_j$ has a slice that is a subset of $Q$.%(i.e.\ there is a fault-prone set $F$ of $p_j$ such that $P_j\setminus F\subseteq Q$).
   \end{enumerate}
 \end{definition}
 
-Note that if we identify the notion of slice with the notion of quorum slice of Mazières~\cite{MazieresStellarConsensusProtocol2015}, then the definition of quorums above coincides with Mazières' definition; thus a Federated Byzantine Quorum System, as defined by Mazières,  is isomorphic to a canonical federated quorum system for some $\mathbb{F}$.
+Item 2 above warrants some explanation.
+The notion of fail-compatible set is a global notion that cannot possibly be known by a process in a permissionless system.
+So, $\overline{\mathbb{F}}$ does not seem suited for practical use in a permissionless system.
+Surprisingly, As we explain in \Cref{sec:practice}, this turns out not to be a problem in practice: there is a way for processes to compute at runtime, without knowing what the fail-compatible sets are, whether a set of received messages represents one of their quorums in $\overline{\mathbb{F}}$.
+
+Note that if we identify the notion of slice with the notion of quorum slice of Mazières~\cite{MazieresStellarConsensusProtocol2015}, then the definition of quorums above coincides with Mazières' definition; thus a Federated Byzantine Quorum System, as defined by Mazières, is isomorphic to a canonical federated quorum system for some $\mathbb{F}$.
+For now, we continue our exposition using~\Cref{def:canonical} as above.
 
 \begin{claim}
  $\overline{\mathbb{F}}$, the canonical federated quorum system for $\mathbb{F}$, satisfies the Availability and Consistency properties.
@@ -211,6 +219,9 @@ Note that if we identify the notion of slice with the notion of quorum slice of 
 \end{proof}
 
 Finally, to conclude, Claims 1 and 2 together imply our main result, Theorem 1.
+
+\section{Canonical Federated Quorum Systems in Practice}
+\label{sec:practice}
 
 \printbibliography
 
