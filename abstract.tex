@@ -43,6 +43,8 @@ In this paper we cast new light on the Stellar model by showing that, similarly 
 
 \section{Introduction}
 
+\todo[inline]{The notion of federeated quorum system does not make sense. If process $p_i$ only trusts $P_i$, then why would it pick quorum members outside $P_i$? We could change the story and only focus on canonical quorum systems. Or maybe it can be understood as follows: a process ``hears'' by gossip from a set of nodes and then picks a quorum among the nodes it heard from; so the conditionn would be: for every slice choice ... , for every two quorums insider ... , ... }
+
 % Following Cachin and Tackmann, we define an asymmetric fail-prone system $\mathbb{F}=\left[\mathcal{F}_1,...,\mathcal{F}_n\right]$ as a family of fail-prone systems, where the fail-prone system $\mathcal{F}_i$ is a set of sets of processes that denote the trust assumptions of process $p_i$. However, we interpret the assumption encoded by a fail-prone system differently from Cachin and Tackmann.
 
 A common problem in a distributed system is to solve a task (e.g.\ consensus) given some assumption about the possible failures that may occur. For example, one may describe possible failures using fail-prone systems~\cite{malkhiByzantineQuorumSystems1998,hirtPlayerSimulationGeneral2000}. A fail-prone system $\mathcal{F}=\left\{F_1,...,F_n\right\}$ is a set of fail-prone sets, where, for every $i$, $F_i$ is a subset of processes. $\mathcal{F}$ denotes the assumption that, in a given execution, the set of processes that actually fail (meaning stop or come under control of an adversary) is an unknown subset of one of the fail-prone sets.
