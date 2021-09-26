@@ -74,7 +74,7 @@ As Cachin and Tackmann observe, asymmetric quorum systems do not capture Stellar
 
 In this paper, we show that, similarly to classic and asymmetric quorum systems, a Federated Byzantine Quorum System can be understood in terms of a fail-prone system.
 
-In contrast with asymmetric quorum systems, where each process makes failure assumptions about the entire system, in a federated fail-prone system, each process makes failure assumptions only about a subset of the system.
+In contrast with asymmetric quorum systems, where processes make failure assumptions about the entire system, in a federated fail-prone system, processes make failure assumptions only about a subset of the system.
 This is key in a permissionless system, where processes do not know exactly what the entire system consists of.
 \Cref{sec:basic} presents a basic notion of Federated Fail-Prone System which eschews some important considerations (dealt with in~\Cref{sec:lying,sec:subjective}) but captures this main idea.
 
@@ -86,11 +86,7 @@ With the notion of Federated Fail-Prone System in hand, we parallel Hirt and Mau
 % In a canonical Federated Quorum Systems, as defined in~\Cref{sec:basic}, 
 Next,~\Cref{sec:lying} extends the basic notion of Federated Fail-Prone Systems to account for the fact that processes that fail may lie and equivocate about their own configuration. Finally,~\Cref{sec:subjective} further extends the model to capture networks consisting of several, disjoint subsets that maintain consistency internally but diverge from each other.
 
-Our results shed new light on the mathematical foundations of the Federated Byzantine Quorum System model and allows to understand Federated Byzantine Quorum Systems in terms of assumptions about failures.
-
-% We also hope that our result will help address the problem of porting existing quorum-based algorithms to the Stellar model, and that it will enable system designer to build on the Federated Byzantine Quorum System model to devise new permissionless systems.
-
-%indeed, how are two processes that never talked to each other supposed to make failure assumptions that satisfy $Q^3(\mathcal{F})$?
+% Our results shed new light on the mathematical foundations of the Federated Byzantine Quorum System model and allows to understand Federated Byzantine Quorum Systems in terms of assumptions about failures.
 
 % In a FBQS, processes do not know who the system participants are exactly. Instead, each process $p_i$ only knows of a subset $P_i$ of the participants and makes assumptions about failures using a fail-prone system $\mathcal{F}_i$ over $P_i$. Moreover, the meaning of the fail-prone system is different from previous work: process $p_i$ assumes that, in every execution, (a) it has made accurate assumptions, i.e.\ the set of process that actually fail is a set $F$ such that $P_i\cap F \in\mathcal{F}_i$, (b) the processes in $P_i\setminus F$ in turn have made accurate assumptions, and (c) so on recursively.
 
