@@ -225,12 +225,22 @@ To prove~\Cref{thm:existsFQSiff}, we first show in~\Cref{thm:canonical} that for
 
 Finally, to conclude, Claims 1 and 2 together imply our main result, Theorem 1.
 
-\section{Liars}
-\label{sec:lying}
+\section{Related Work}
 
-\section{Subjective Failures}
-\label{sec:subjective}
+Hirt and Maurer~\cite{hirtPlayerSimulationGeneral2000} show that there exists a quorum system for $\mathcal{F}$ if and only if no three fail-prone sets cover the whole system; this property is called property $Q^3(\mathcal{F})$. Moreover, every fail-prone system that satisfies $Q^3(\mathcal{F})$ determines a canonical quorum system $\overline{\mathcal{F}}$ where $Q$ is a quorum if and only if $Q$ is the complement of a fail-prone set. %Thus, given a fail-prone systems satisfying $\mathcal{F}$, $\overline{\mathcal{F}}$ is a natural quorum system to use.
 
+A limitation of quorum systems is that using a quorum system presupposes an existing agreement on who participates in the system and what constitutes a quorum.
+This is difficult to achieve in an open, permissionless network, where arbitrary processor can join or leave without synchronization.
+Some permissionless blockchains solve this problem with Proof of Stake, which, roughly, relies on a pre-existing agreement on who owns how much funds and defines a quorum as a set that collectively owns more than some threshold, e.g.\ two thirds, of the total amount of funds available; in terms of fail-prone system, this amounts to assuming that the fail-prone sets are the sets that collectively own less than one third of the total amount of funds.
+
+Another idea is to let processes pick their own quorums for themselves. In a setting where processes have public, recognizable identities, one might hope that there is enough agreement in the real-world on some reputation-like quantity so that, if processes pick peers they deem reputable to create their quorums, the resulting quorums will be sufficiently overlapping and non-faulty. This leads to the idea of asymmetric fail-prone systems, as studied by Cachin and Tackmann~\cite{cachinAsymmetricDistributedTrust2019}.
+
+Cachin and Tackmann generalize fail-prone systems to asymmetric fail-prone systems, where each process makes its own assumptions about which processes may fail together.
+An asymmetric fail-prone system is an array of fail-prone systems $\mathbb{F}=\left[\mathcal{F}_1,...,\mathcal{F}_n\right]$ where $\mathcal{F}_i$ is a fail-prone system denoting the assumptions of process $p_i$.  Similarly to Hirt and Maurer, Cachin and Tackman define an asymmetric quorum system for $\mathbb{F}$, they generalize property $Q^3$ to asymmetric quorum systems, and they show that (a) $Q^3(\mathbb{F})$ holds if and only if there exists an asymmetric quorum system for $\mathbb{F}$ and (b) an asymmetric fail-prone system determines a canonical asymmetric quorum system for $\mathbb{F}$.
+
+% as follows: $Q^3(\mathbb{F})$ holds if and only if for every two processes $p_i$ and $p_j$, for every $F_i^1, F_i^2\in \mathcal{F}_i$, $F_j^1, F_j^2\in \mathcal{F}_j$, $F_i^1\cup F_j^1\cup \left(F_i^2\cap F_j^2\right)$ do not cover the whole set.
+
+The property $Q^3(\mathbb{F})$ of Cachin and Tackmann stipulates that for every two processes $p_i$ and $p_j$, for every two fail-prone sets $F_i^1$ and $F_i^2$ of $p_i$, for every two fail-prone sets $F_j^1$ and $F_j^2$ of $p_j$, we must have $\mathcal{P}\not\subseteq F_i^1\cup F_j^1\cup \left(F_i^2\cap F_j^2\right)$. Thus, unless every two processes in the system make compatible assumptions, in the sense of satisfying property $Q^3(\mathbb{F})$, it is not possible to obtain an asymmetric quorum system that tolerates failures within the bounds of the failure assumptions made by the processes. In practice, it is unclear to us whether there exists a pragmatic scheme to achieve Cachin and Tackmann's property $Q^3(\mathbb{F})$ in a permissionless network.
 \printbibliography
 
 % \section{Related Work}
