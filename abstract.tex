@@ -125,21 +125,23 @@ In this paper, we make the following contributions:
 
 % Next,~\Cref{sec:lying} extends the basic notion of Federated Fail-Prone Systems to account for the fact that processes that fail may lie and equivocate about their own configuration. Finally,~\Cref{sec:subjective} further extends the model to capture networks consisting of several, disjoint subsets that maintain consistency internally but diverge from each other.
 
-\section{Federated Quorum Systems in Terms of Federated Fail-Prone Systems}
+\section{Federated Fail-Prone Systems}
 \label{sec:basic}
 
 We consider a set of processes $\mathcal{P}$ where individual processes do not know what $\mathcal{P}$ is exactly.
 Instead, each process $p_i$ trusts a subset $P_i$ of the participants to present accurate information about the rest of the system.
 However, $p_i$ trusts members of $P_i$ only to the extent that they do not fail, and $p_i$ makes assumptions about those failures using a fail-prone system $\mathcal{F}_i$ over $P_i$ (i.e.\ $\mathcal{F}_i\subseteq 2^{P_i}$).
 
-We capture the setting described above with the notion of federated fail-prone system. A federated fail-prone system is an array $\mathbb{F}=\left[\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right]$ that associates to each process $p_i$ a set of trusted peers $P_i$ and a fail-prone system $\mathcal{F}_i$ over $P_i$. %Moreover, $\mathbb{F}$ must satisfy property $Q^3(\mathbb{F})$ defined below.
+We capture the setting described above with the notion of federated fail-prone system. A federated fail-prone system is an array $\mathbb{F}=\left[\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right]$ that associates to each process $p_i$ a set of trusted peers $P_i$ and a fail-prone system $\mathcal{F}_i$ over $P_i$.
 We now consider a fixed such $\mathbb{F}$.
 
-The assumptions of the processes, as embodied in $\mathbb{F}$, are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every process $p_i$ not in $A$, there exists $F\in\mathcal{F}_i$ such that $P_i\cap A \subseteq F$; we say that such an execution is a fail-compatible execution, and that such a set $A$ is fail-compatible.
+Next we define what it means for a subset $P$ of the processes to make correct assumptions about failures.
+The assumptions of the processes in a set $P$ are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every process $p_i$ in $P$ that does not fail (i.e.\ $p_i\not\in A$), there exists $F\in\mathcal{F}_i$ such that $P_i\cap A \subseteq F$.
+We say that such an execution is a $P$-fail-compatible execution, and that such a set $A$ is $P$-fail-compatible.
 % {\color{red}(here we could make things relative to a subset of the processes.)}
 
 Note that two processes $p_i$ and $p_j$ may have disjoint trusted sets, i.e.\ it is well possible that $P_i\cap P_j=\emptyset$.
-This may seem to be an insurmountable problem in e.g.\ a consensus algorithm: how are processes supposed to remain in agreement despite not having any peer in common? Informally, the answer is that two processes that have disjoint trusted sets can nevertheless stay in agreement when they can always transitively hear from common process despite failures; this is formalized precisely in property $Q^3(\mathbb{F})$ of federated fail-prone systems (defined below).
+This may seem to be an insurmountable problem in e.g.\ a consensus algorithm: how are processes supposed to remain in agreement despite not having any peer in common? Informally, the answer is that two processes that have disjoint trusted sets can nevertheless stay in agreement when they can always transitively hear from a common third process despite failures; this is formalized precisely in property $Q^3(\mathbb{F})$ of federated fail-prone systems (defined below).
 
 We now proceed with a few definitions necessary for the rest of the paper.
 Given a process $p_i$ and $F\in \mathcal{F}_i$, we say that the set $P_i\setminus F$ is a slice of $p_i$.
