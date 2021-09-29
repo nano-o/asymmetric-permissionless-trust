@@ -84,6 +84,43 @@ In this paper, we make the following contributions:
     The canonical quorum system that we obtain is an instance of a Federated Byzantine Quorum System as defined by Mazières~\cite{MazieresStellarConsensusProtocol2015} and used in the Stellar Network to solve consensus.
 \end{enumerate}
 
+\section{From Fail-Prone Systems to Federated Fail-Prone Systems}
+
+\todo[inline]{
+Here the idea is motivate $Q^3$ and the definition of quorums by analogy.
+So we'd start by presenting classical fail-prone systems, explaining why $Q^3$ is defined like it is, and then obtain the new $Q^3$ by analogy.
+}
+
+We consider a set of processes $\mathcal{P}=\left\{p_1,...,p_n\right\}$ in a message-passing system with Byzantine failures.
+That is, in a given execution, a process is either well-behaved or faulty, and a faulty process can behave arbitrarily (including not taking steps).
+Processes do not know in advance which processes are well-behaved and which are not.
+% We also assume that processes have a way to broadcast messages, and that a message broadcast by a well-behaved process is eventually delivered to all well-behaved processes.
+
+We assume that processes do not know what $\mathcal{P}$ is exactly.
+Instead, each process $p_i$ trusts a subset $T_i$ of the participants.
+However, $p_i$ trusts members of $T_i$ only to the extent that they do not fail, and $p_i$ makes assumptions about those failures using a fail-prone system $\mathcal{F}_i$ over $T_i$ (i.e.\ $\mathcal{F}_i\subseteq 2^{T_i}$).
+Note that two processes $p_i$ and $p_j$ may have disjoint trusted sets, i.e.\ nothing prevents that $T_i\cap T_j=\emptyset$.
+
+We capture the processes' assumptions about failures using the notion of \emph{federated fail-prone system}. A federated fail-prone system is an array $\mathbb{F}=\left[\left(T_1,\mathcal{F}_1\right),...,\left(T_n,\mathcal{F}_n\right)\right]$ that associates to each process $p_i$ a set of trusted peers $T_i$ and a fail-prone system $\mathcal{F}_i$ over $T_i$.
+% We now consider a fixed such $\mathbb{F}$.
+
+The question we now ask is whether a federated fail-prone system helps us obtain a quorum system which allows to solve tasks such as read-write register and consensus.
+To answer this question, we will proceed by analogy with the fail-prone systems.
+
+A fail-prone system $\mathcal{F}=\left\{F_1,...,F_n\right\}$ is a set of fail-prone sets, where, for every $i$, the fail-prone set $F_i$ is a subset of processes.
+$\mathcal{F}$ denotes the assumption that, in a given execution, the set of processes that actually fail is a subset of one of the fail-prone sets.
+We call such an execution a fail-compatible execution, and we call a system in which all execution are fail-compatible a fail-compatible system.
+
+In a fail-compatible system with a reliable network, every well-behaved process is guaranteed to eventually hear from a quorum of processes, i.e.\ a set $Q$ of processes such that there exists a fail-prone set $F$ where $Q=\mathcal{P}\setminus F$.
+This is the Availability property of quorum systems.
+Thanks to the availability property, a process that never waits for more than a quorum is guaranteed never to wait forever.
+However, in an algorithm in which processes never wait for more than a quorum, no meaningful synchronization can take place if quorums do not have well-behaved members in common.
+Otherwise, we can split the system in two disjoint subsets that make progress on their own without ever hearing from each other except through the word of failed processes, which can lie and equivocate about what each set is doing.
+When is it guaranteed that two quorums have a well-behaved member in common?
+Since quorums are the complement of fail-prone sets, quorums are guaranteed to have well-behaved members in common if and only if no three fail-prone sets cover the whole system.
+
+
+
 \section{Federated Fail-Prone Systems}
 \label{sec:basic}
 
@@ -100,7 +137,7 @@ Note that two processes $p_i$ and $p_j$ may have disjoint trusted sets, i.e.\ no
 We capture the processes' assumptions about failures using the notion of \emph{federated fail-prone system}. A federated fail-prone system is an array $\mathbb{F}=\left[\left(T_1,\mathcal{F}_1\right),...,\left(T_n,\mathcal{F}_n\right)\right]$ that associates to each process $p_i$ a set of trusted peers $T_i$ and a fail-prone system $\mathcal{F}_i$ over $T_i$.
 We now consider a fixed such $\mathbb{F}$.
 
-We say processes make correct assumptions about failure in an execution whenever the set $A$ of processes that fail during the execution is such that, for every process $p_i$ that does not fail, the members of $p_i$'s trusted set that fail are a subset of one of $p_i$'s fail-prone sets.
+We say processes make correct assumptions in an execution if and only if the set $A$ of processes that fail during the execution is such that, for every process $p_i$ that does not fail, the members of $p_i$'s trusted set that fail are a subset of one of $p_i$'s fail-prone sets.
 In other words, for every process $p_i$ in $\mathcal{P}\setminus A$, there exists $F\in\mathcal{F}_i$ such that $T_i\cap A \subseteq F$.
 %More formally, the assumptions of the processes in a set $P$ are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every process $p_i$ in $P$ that does not fail (i.e.\ $p_i\not\in A$), there exists $F\in\mathcal{F}_i$ such that $T_i\cap A \subseteq F$.
 We say that such an execution is a fail-compatible execution, and that such a set $A$ is fail-compatible.
