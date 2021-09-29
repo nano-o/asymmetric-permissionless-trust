@@ -89,27 +89,27 @@ In this paper, we make the following contributions:
 
 We consider a set of processes $\mathcal{P}=\left\{p_1,...,p_n\right\}$ in a message-passing system with Byzantine failures.
 That is, in a given execution, a process is either well-behaved or faulty, and a faulty process can behave arbitrarily (including not taking steps).
-
 Processes do not know in advance which processes are well-behaved and which are not.
-Moreover, we assume that processes do not know what $\mathcal{P}$ is exactly.
+We also assume that processes have a way to broadcast messages, and that a message broadcast by a well-behaved process is eventually delivered to all well-behaved processes.
+
+We assume that processes do not know what $\mathcal{P}$ is exactly.
 Instead, each process $p_i$ trusts a subset $T_i$ of the participants.
 However, $p_i$ trusts members of $T_i$ only to the extent that they do not fail, and $p_i$ makes assumptions about those failures using a fail-prone system $\mathcal{F}_i$ over $T_i$ (i.e.\ $\mathcal{F}_i\subseteq 2^{T_i}$).
 Note that two processes $p_i$ and $p_j$ may have disjoint trusted sets, i.e.\ nothing prevents that $T_i\cap T_j=\emptyset$.
-We also assume that processes have a way to broadcast messages, and that a message sent by a well-behaved process is eventually delivered to all well-behaved processes.
 
 We capture the processes' assumptions about failures using the notion of \emph{federated fail-prone system}. A federated fail-prone system is an array $\mathbb{F}=\left[\left(T_1,\mathcal{F}_1\right),...,\left(T_n,\mathcal{F}_n\right)\right]$ that associates to each process $p_i$ a set of trusted peers $T_i$ and a fail-prone system $\mathcal{F}_i$ over $T_i$.
 We now consider a fixed such $\mathbb{F}$.
 
-We say that a subset $P$ of the processes make correct assumptions about failure in an execution whenever the set $A$ of processes that fail during the execution is such that, for every process $p_i$ in $P$ that does not fail, the members of $p_i$'s trusted set that fail are a subset of one of $p_i$'s fail-prone sets.
-In other words, for every process $p_i$ in $P\setminus A$, there exists $F\in\mathcal{F}_i$ such that $T_i\cap A \subseteq F$.
+We say processes make correct assumptions about failure in an execution whenever the set $A$ of processes that fail during the execution is such that, for every process $p_i$ that does not fail, the members of $p_i$'s trusted set that fail are a subset of one of $p_i$'s fail-prone sets.
+In other words, for every process $p_i$ in $\mathcal{P}\setminus A$, there exists $F\in\mathcal{F}_i$ such that $T_i\cap A \subseteq F$.
 %More formally, the assumptions of the processes in a set $P$ are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every process $p_i$ in $P$ that does not fail (i.e.\ $p_i\not\in A$), there exists $F\in\mathcal{F}_i$ such that $T_i\cap A \subseteq F$.
-We say that such an execution is a $P$-fail-compatible execution, and that such a set $A$ is $P$-fail-compatible.
-Finally, a $P$-fail-compatible system is a set of execution that are all $P$-fail-compatible.
+We say that such an execution is a fail-compatible execution, and that such a set $A$ is fail-compatible.
+Finally, a fail-compatible system is a set of execution that are all fail-compatible.
 
-Observe that, given a $P$-fail-compatible execution, for every process $p_i\in P$, there is a fail-prone set $F$ of $p_i$ such that $T_i\setminus F$ does not fail.
+Observe that, given a fail-compatible execution, for every process $p_i$, there is a fail-prone set $F$ of $p_i$ such that $T_i\setminus F$ does not fail.
 We call such a set a slice of $p_i$, i.e.\ a set of processes $S$ is a slice of $p_i$ if and only if there exists a fail-prone set $F$ of $p_i$ such that $S=T_i\setminus F$.
-The notion of slice is important because, in a $\mathcal{P}$-fail-compatible system (where the failure assumptions of every process that does not fail are satisfied), if processes e.g.\ all broadcast some information, it is guaranteed that every process eventually hears from a set of processes $Q$ such that every member of $Q$ has a slice $S\subseteq Q$.
-By analogy with quorum systems, where processes can
+The notion of slice is important because, in a fail-compatible system, if processes all broadcast, it is guaranteed that every process eventually hears from a set of processes $Q$ such that every member of $Q$ has a slice $S\subseteq Q$.
+By analogy with traditional quorum systems, where processes are guaranteed to eventually hear from a quorum, we will say that such a set $Q$ is a quorum.
 
 We now proceed with a few definitions necessary for the rest of the paper.
 Given a process $p_i$ and $F\in \mathcal{F}_i$, we say that the set $P_i\setminus F$ is a slice of $p_i$.
