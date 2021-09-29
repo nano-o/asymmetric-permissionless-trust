@@ -87,20 +87,29 @@ In this paper, we make the following contributions:
 \section{Federated Fail-Prone Systems}
 \label{sec:basic}
 
-We consider a set of processes $\mathcal{P}$ where individual processes do not know what $\mathcal{P}$ is exactly.
-Instead, each process $p_i$ trusts a subset $P_i$ of the participants to present accurate information about the rest of the system.
-However, $p_i$ trusts members of $P_i$ only to the extent that they do not fail, and $p_i$ makes assumptions about those failures using a fail-prone system $\mathcal{F}_i$ over $P_i$ (i.e.\ $\mathcal{F}_i\subseteq 2^{P_i}$).
+We consider a set of processes $\mathcal{P}=\left\{p_1,...,p_n\right\}$ in a message-passing system with Byzantine failures.
+That is, in a given execution, a process is either well-behaved or faulty, and a faulty process can behave arbitrarily (including not taking steps).
 
-We capture the setting described above with the notion of federated fail-prone system. A federated fail-prone system is an array $\mathbb{F}=\left[\left(P_1,\mathcal{F}_1\right),...,\left(P_n,\mathcal{F}_n\right)\right]$ that associates to each process $p_i$ a set of trusted peers $P_i$ and a fail-prone system $\mathcal{F}_i$ over $P_i$.
+Processes do not know in advance which processes are well-behaved and which are not.
+Moreover, we assume that processes do not know what $\mathcal{P}$ is exactly.
+Instead, each process $p_i$ trusts a subset $T_i$ of the participants.
+However, $p_i$ trusts members of $T_i$ only to the extent that they do not fail, and $p_i$ makes assumptions about those failures using a fail-prone system $\mathcal{F}_i$ over $T_i$ (i.e.\ $\mathcal{F}_i\subseteq 2^{T_i}$).
+Note that two processes $p_i$ and $p_j$ may have disjoint trusted sets, i.e.\ nothing prevents that $T_i\cap T_j=\emptyset$.
+We also assume that processes have a way to broadcast messages, and that a message sent by a well-behaved process is eventually delivered to all well-behaved processes.
+
+We capture the processes' assumptions about failures using the notion of \emph{federated fail-prone system}. A federated fail-prone system is an array $\mathbb{F}=\left[\left(T_1,\mathcal{F}_1\right),...,\left(T_n,\mathcal{F}_n\right)\right]$ that associates to each process $p_i$ a set of trusted peers $T_i$ and a fail-prone system $\mathcal{F}_i$ over $T_i$.
 We now consider a fixed such $\mathbb{F}$.
 
-Next we define what it means for a subset $P$ of the processes to make correct assumptions about failures.
-The assumptions of the processes in a set $P$ are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every process $p_i$ in $P$ that does not fail (i.e.\ $p_i\not\in A$), there exists $F\in\mathcal{F}_i$ such that $P_i\cap A \subseteq F$.
+We say that a subset $P$ of the processes make correct assumptions about failure in an execution whenever the set $A$ of processes that fail during the execution is such that, for every process $p_i$ in $P$ that does not fail, the members of $p_i$'s trusted set that fail are a subset of one of $p_i$'s fail-prone sets.
+In other words, for every process $p_i$ in $P\setminus A$, there exists $F\in\mathcal{F}_i$ such that $T_i\cap A \subseteq F$.
+%More formally, the assumptions of the processes in a set $P$ are satisfied in an execution if and only if the set of processes that actually fail is a set $A$ such that, for every process $p_i$ in $P$ that does not fail (i.e.\ $p_i\not\in A$), there exists $F\in\mathcal{F}_i$ such that $T_i\cap A \subseteq F$.
 We say that such an execution is a $P$-fail-compatible execution, and that such a set $A$ is $P$-fail-compatible.
-% {\color{red}(here we could make things relative to a subset of the processes.)}
+Finally, a $P$-fail-compatible system is a set of execution that are all $P$-fail-compatible.
 
-Note that two processes $p_i$ and $p_j$ may have disjoint trusted sets, i.e.\ it is well possible that $P_i\cap P_j=\emptyset$.
-This may seem to be an insurmountable problem in e.g.\ a consensus algorithm: how are processes supposed to remain in agreement despite not having any peer in common? Informally, the answer is that two processes that have disjoint trusted sets can nevertheless stay in agreement when they can always transitively hear from a common third process despite failures; this is formalized precisely in property $Q^3(\mathbb{F})$ of federated fail-prone systems (defined below).
+Observe that, given a $P$-fail-compatible execution, for every process $p_i\in P$, there is a fail-prone set $F$ of $p_i$ such that $T_i\setminus F$ does not fail.
+We call such a set a slice of $p_i$, i.e.\ a set of processes $S$ is a slice of $p_i$ if and only if there exists a fail-prone set $F$ of $p_i$ such that $S=T_i\setminus F$.
+The notion of slice is important because, in a $\mathcal{P}$-fail-compatible system (where the failure assumptions of every process that does not fail are satisfied), if processes e.g.\ all broadcast some information, it is guaranteed that every process eventually hears from a set of processes $Q$ such that every member of $Q$ has a slice $S\subseteq Q$.
+By analogy with quorum systems, where processes can
 
 We now proceed with a few definitions necessary for the rest of the paper.
 Given a process $p_i$ and $F\in \mathcal{F}_i$, we say that the set $P_i\setminus F$ is a slice of $p_i$.
