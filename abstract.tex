@@ -140,7 +140,7 @@ Given a graph $G$ and a vertex $v$, we write $G^*(v)$ for set of vertices reacha
 %Given the above preliminary definitions, we now define property $Q^3(\mathbb{F})$ for federated fail-prone systems.
 Next, we define property $Q^3(\mathbb{F})$ for federated fail-prone systems.
 \begin{definition}[Property $Q^3(\mathbb{F})$]
-  Property $Q^3(\mathbb{F})$ holds if and only if for every two processes $p_i$ and $p_j$, for every two slice-choice graphs $G_i$ and $G_j$, for every fail-compatible set $A$, $\left(G_1-A\right)^*(p_1)$ and $\left(G_2-A\right)^*(p_2)$ intersect.
+  Property $Q^3(\mathbb{F})$ holds if and only if for every two processes $p_i$ and $p_j$, for every two slice-choice graphs $G_i$ and $G_j$, for every fail-compatible set $A$, the set of vertices reachable from $p_i$ in $G_i-A$ intersects the set of vertices reachable from $p_j$ in $G_j-A$ (i.e.\ $\left(G_i-A\right)^*(p_i)$ and $\left(G_j-A\right)^*(p_j)$ intersect).
 \end{definition}
 
 Informally, Property $Q^3(\mathbb{F})$ says that two processes can always transitively hear from a third common process despite any failures compatible with the processes' failure assumptions.\todo{Even if faulty nodes lie about their slices!}
@@ -172,6 +172,15 @@ Informally, Property $Q^3(\mathbb{F})$ says that two processes can always transi
   Note that we have not used the assumption that $Q^3(\mathcal{F})$ holds, and thus Availability holds regardless of whether $Q^3(\mathcal{F})$ holds.
 
   Let us now show that $\overline{\mathbb{F}}$ satisfies the Consistency property.
+  Consider two processes $p_i$ and $p_j$, a quorum $Q_i$ of $p_i$, and a quorum $Q_j$ of $p_j$.
+  We must show that $Q_i$ and $Q_j$ have a well-behaved member in common (i.e.\ a common member in $\mathcal{P}\setminus A$).
+  By definition of $\overline{\mathbb{F}}$, for every quorum $Q$ of $p_i$, there exists a slice-choice array $\mathcal{S}_Q=\left[S_Q^1,...,S_Q^n\right]$ such that, for every $p_k\in Q$, $S_Q^k\subseteq Q$.
+  Similarly, for every quorum $Q'$ of $p_j$, there exists a slice-choice array $\mathcal{S}_{Q'}=\left[S_{Q'}^1,...,S_{Q'}^n\right]$ such that, for every $p_k\in Q'$, $S_{Q'}^k\subseteq Q'$.
+  Now consider the slice-choice graphs $G_Q$ and $G_{Q'}$ corresponding to $\mathcal{S}_Q$ and $\mathcal{S}_{Q'}$, respectively.
+  By Property~$Q^3(\mathcal{F})$, we obtain that the set of vertices reachable from $p_i$ in $G_Q-A$ intersects the set of vertices reachable from $p_j$ in $G_{Q'}-A$.
+  Moreover, observe that the set of vertices reachable from $p_i$ in $G_Q-A$ is a subset of $Q$.
+  Similarly, observe that the set of vertices reachable from $p_j$ in $G_{Q'}-A$ is a subset of $Q'$.
+  Thus, we conclude that $Q$ and $Q'$ have a well-behaved member in common.
 \end{proof}
 
 \subsection{Learning about Quorums}
