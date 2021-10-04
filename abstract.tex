@@ -24,6 +24,8 @@
 \newtheorem{rrule}{Rule}
 \newtheorem{thm}{Theorem}
 
+\newcommand{\note}[1]{{\color{red}#1}}
+
 % \title{Consensus with Permissionless Quorums in the Stellar Network}
 % A reference to Cachin's paper:
 \title{Asymmetric Distributed Trust in a Permissionless System}
@@ -46,42 +48,42 @@ Moreover, we show that, under a generalization of property $Q^3$, a federated fa
 
 \section{Introduction}
 
-% \todo[inline]{The notion of federeated quorum system does not make sense. If process $p_i$ only trusts $P_i$, then why would it pick quorum members outside $P_i$? We could change the story and only focus on canonical quorum systems. Or maybe it can be understood as follows: a process ``hears'' by gossip from a set of nodes and then picks a quorum among the nodes it heard from; so the conditionn would be: for every slice choice ... , for every two quorums insider ... , ... }
-
 A common problem in a distributed system is to solve a task (e.g.\ consensus) given some assumption about the possible failures that may occur.
-Let us consider possible failures described by a fail-prone system~\cite{malkhiByzantineQuorumSystems1998}, also called adversary structure~\cite{hirtPlayerSimulationGeneral2000}.
+In this paper, we consider Byzantine failures, where a process that fails behaves arbitrarily from then on.
+We are interested in assumptions about failures described by a fail-prone system~\cite{malkhiByzantineQuorumSystems1998}, also called adversary structure~\cite{hirtPlayerSimulationGeneral2000}.
 A fail-prone system $\mathcal{F}=\left\{F_1,...,F_n\right\}$ is a set of fail-prone sets, where, for every $i$, the fail-prone set $F_i$ is a subset of processes.
-$\mathcal{F}$ denotes the assumption that, in a given execution, the set of processes that actually fail is a subset of one of the fail-prone sets; we call such an execution a fail-compatible execution.
-
-In the rest of the paper, we consider Byzantine failures, where a process that fails can behave arbitrarily; this models the worst-case scenario in which the failed processes are under control of an adversary which tries to disrupt the system.
+An execution satisfies the assumption described by $\mathcal{F}$ when the set of processes that fail during the execution is a subset of one of the fail-prone sets; we call such an execution a fail-compatible execution.
 
 To devise an algorithm that tolerates the failures described by a fail-prone system, one usually uses a quorum system for $\mathcal{F}$.
-A quorum system for $\mathcal{F}$ is a set of quorums, which are sets of processes, such that: (a) the intersection of two quorums is not a subset of a fail-prone set and (b) for every fail-prone set $F$, there is a quorum disjoint from $F$.
-This guarantees two crucial properties:
+A quorum system for $\mathcal{F}$ is a set of quorums, which are sets of processes, such that:% (a) the intersection of two quorums is not a subset of a fail-prone set and (b) for every fail-prone set $F$, there is a quorum disjoint from $F$.
+% This guarantees two crucial properties:
 \begin{itemize}
   \item[Consistency] In every fail-compatible execution, every two quorums have a non-faulty member in common.
   \item[Availability] In every fail-compatible execution, there is at least one quorum that is exclusively non-faulty.
 \end{itemize}
-Given the Consistency and Availability properties, there are well-known algorithms for solving tasks such as read-write registers or consensus.
+Given a quorum system satisfying the Consistency and Availability properties, there are well-known algorithms for solving problems such as reliable broadcast or consensus.
 
-Given a fail-prone system $\mathcal{F}$, Hirt and Maurer~\cite{hirtPlayerSimulationGeneral2000} show that, if no three fail-prone sets cover the whole system, a property called Property $Q^3(\mathcal{F})$, then there exists a canonical quorum system $\overline{\mathcal{F}}$ for $\mathcal{F}$.\footnote{Hirt and Maurer also show that if $Q^3(\mathcal{F})$ does not hold, then there exists no quorum system for $\mathcal{F}$.}
-$\overline{\mathcal{F}}$ is defined such that a set $Q$ is a quorum whenever $Q$ is the complement of a fail-prone set.
-Thus, given assumptions about failures formalized in a fail-prone system $\mathcal{F}$ satisfying $Q^3\left(\mathcal{F}\right)$, $\overline{\mathcal{F}}$ is a natural quorum system to use to solve tasks such as consensus.
-For example, consider a fail-prone system $\mathcal{F}_4$ consisting of 4 process where every singleton set is a fail-prone set (i.e.\ in every execution, at most one process fails).
-By definition, the quorums of the canonical quorum system for $\mathcal{F}_4$ are all the sets of processes of cardinality 3.
+Given a fail-prone system $\mathcal{F}$, Hirt and Maurer~\cite{hirtPlayerSimulationGeneral2000} show that, if no three fail-prone sets cover the whole system, a property called Property $Q^3(\mathcal{F})$, then there exists a canonical quorum system $\overline{\mathcal{F}}$ for $\mathcal{F}$.\footnote{Hirt and Maurer also show that if $Q^3(\mathcal{F})$ does not hold, then there exists no quorum system for $\mathcal{F}$.}, where a set $Q$ is a quorum whenever $Q$ is the complement of a fail-prone set.
 
-One issue with the notion of fail-prone system is that it is not very useful in permissionless systems.
-In a permissionless system, processes do not generally know what the set of participants is, and each process has a potentially different, partial view of the system.
-Thus, it does not make sense for processes to (a) make assumptions about the entire system and (b) to all make the same assumptions.
-For example, in a permissionless system, a fail-prone system where processes assume that at most some threshold $t$ (e.g.\ 1/3) of the system will fail does not yield a useful canonical quorum system: a quorum is supposed to be a set of more than $n$ times $t$ processes, where $n$ is the total number of processes, but there is no way to reliably know $n$.
+% Thus, given assumptions about failures formalized in a fail-prone system $\mathcal{F}$ satisfying $Q^3\left(\mathcal{F}\right)$, $\overline{\mathcal{F}}$ is a natural quorum system to use to solve tasks such as reliable broadcast and consensus.
+% For example, consider a fail-prone system $\mathcal{F}_4$ consisting of 4 process where every singleton set is a fail-prone set (i.e.\ in every execution, at most one process fails).
+% By definition, the quorums of the canonical quorum system for $\mathcal{F}_4$ are all the sets of processes of cardinality 3.
+
+Fail-prone system model the situation in which all processes make the same failure assumptions about the whole system.
+This is not realistic in a permissionless system, where processes do not generally know what the set of participants is and each process has a potentially different, partial view of the system.
+% One issue with the notion of fail-prone system is that it is not very useful in permissionless systems.
+% In a permissionless system, processes do not generally know what the set of participants is, and each process has a potentially different, partial view of the system.
+Thus, it does not make sense for processes to (a) to all make the same assumptions and (b) make assumptions about the entire system.
+For example, in a permissionless system, a fail-prone system where processes assume that less than some threshold $t=1/3$ of the system will fail does not yield a useful canonical quorum system: a quorum is a set of more than $n(1-t)=2n/3$ processes, where $n$ is the total number of processes, but there is no way for processes to determine $n$.
+In recent work, Cachin and Tackmann~\cite{cachinAsymmetricDistributedTrust2019} propose Asymmetric Fail-Prone Systems which address point (a) above, but not point (b).
 
 In this paper, we make the following contributions:
 \begin{enumerate}
   \item
-    We propose \emph{federated fail-prone systems}, which generalize fail-prone systems and are adapted to permissionless systems.
-    In contrast with fail-prone systems, where all processes make the same failure assumptions about the entire system, in a federated fail-prone system, each process (a) makes its own, personal failures assumptions and (b) makes failure assumptions only about a subset of the system.
+    We propose \emph{federated fail-prone systems}, which generalize fail-prone systems and are adapted to the permissionless setting.
+    Crucially, in a federated fail-prone system, each process (a) makes its own, personal failure assumptions and (b) makes failure assumptions only about a subset of the system.
   \item
-    We show that given a federated fail-prone system satisfying a generalization of property $Q^3$, there is a canonical quorum system that can be used to solve consensus in a permissionless system.
+    We show that given a federated fail-prone system satisfying a generalization of property $Q^3$, there is a canonical quorum system that satisfies generalize Availability and Consistency properties that are sufficient to solve reliable broadcast or consensus.
     The canonical quorum system that we obtain is an instance of a Federated Byzantine Quorum System as defined by Mazières~\cite{MazieresStellarConsensusProtocol2015} and used in the Stellar Network to solve consensus.
 \end{enumerate}
 
