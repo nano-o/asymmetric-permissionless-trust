@@ -35,12 +35,11 @@
 \maketitle
 
 \abstract{
-Fail-prone systems capture assumptions about which processes may fail together during an execution of a distributed system.
-To every fail-prone system corresponds a canonical quorum system that can solve tasks such as read-write registers and consensus despite failures that remain within the assumptions.
-However, in a permissionless network, it is difficult to agree on failure assumptions or quorums a priori.
-In practice, the Stellar Network solves this problem by allowing participants to form their own, personal notion of what a quorum is.
-However, the relationship between Stellar's model and traditional quorum systems is not well-understood.
-In this paper we cast new light on the Stellar model by showing that, similarly to traditional quorum systems, Stellar's Federated Byzantine Quorum Systems correspond to assumptions about failures that are formalized using a new form of fail-prone system.
+A fail-prone system captures assumptions about which processes may fail together during an execution of a distributed system.
+It is a useful tool for the design of distributed algorithms because a fail-prone system determines a canonical quorum system that, assuming it satisfies a property referred to as $Q^3$, allows to solve tasks such as reliable broadcast and consensus despite failures that remain within the assumptions.
+However, fail-prone systems are not adapted to permissionless networks, where processes have no way to agree on failure assumptions beforehand.
+In this paper, we propose federated fail-prone systems, which generalize fail-prone systems and are adapted to representing failure assumptions made by processes in a permissionless network.
+Moreover, we show that, under a generalization of property $Q^3$, a federated fail-prone system determines a canonical quorum system allowing to solve tasks such as reliable broadcast and consensus despite failures that remain within the assumptions.
 }
 
 \newpage
