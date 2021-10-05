@@ -1,7 +1,7 @@
 \documentclass[11pt,letterpaper]{article}
 
 % \usepackage[lmargin=0in,rmargin=2.5in]{geometry}
-% \setlength{\marginparwidth}{2.2in}
+\setlength{\marginparwidth}{1.5in}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{xcolor}
 \usepackage{amsthm}
@@ -12,8 +12,8 @@
 }
 \usepackage{cleveref}
 % \usepackage[disable]{todonotes}
-% \usepackage{todonotes}
-% \newcommand{\mytodo}[1]{\todo[size=\scriptsize]{#1}}
+\usepackage{todonotes}
+\newcommand{\mytodo}[1]{\todo[size=\scriptsize]{#1}}
 
 \usepackage{biblatex}
 \addbibresource{library.bib}
@@ -118,9 +118,9 @@ Thus, a fail-compatible execution is an execution in which the set of processes 
 % Finally, a fail-compatible system is a set of execution that are all fail-compatible.
 
 Given a federated fail-prone system, we would like to obtain a quorum system that enables solving problems such as reliable broadcast and consensus in fail-compatible executions.
-Since processes each make their own failure assumptions, we consider quorum system in which each process has its own set of quorums, as formalized in federated quorum systems.
+Since processes each make their own failure assumptions, we consider quorum systems in which each process has its own set of quorums, as formalized in federated quorum systems.
 A federated quorum system $\mathbb{Q}$ is an array $\left[\mathcal{Q}_1,...,\mathcal{Q}_n\right]$ where, for every process $p_i$, $\mathcal{Q}_i$ is a quorum system over $\mathcal{P}$ (i.e.\ $Q_i\subseteq 2^{\mathcal{P}}$).
-For a federated quorum system to be useful, it must satisfy at least the Availability and Consistency properties below.
+We generalize the Consistency and Availability to federated quorum system as follows. %it must satisfy at least the Availability and Consistency properties below.
 \begin{itemize}
   \item[Consistency] In every fail-compatible execution, for every two non-faulty processes $p_i$ and $p_j$, for every two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, $Q_i$ and $Q_j$ have a non-faulty member in common.
   \item[Availability] In every fail-compatible execution, every non-faulty process $p_i$  has at least one quorum that is exclusively non-faulty.
@@ -167,7 +167,7 @@ We now define the canonical federated quorum system for a federated fail-prone s
   Given a federated fail-prone system $\mathbb{F}$, we define the canonical federated quorum system $\overline{\mathbb{F}}=\left[\mathcal{Q}_1,...,\mathcal{Q}_n\right]$ such that the set $\mathcal{Q}_i$ of quorums of $p_i$ is the biggest set such that, for every $Q\in\mathcal{Q}_i$:
   \begin{enumerate}
     \item $p_i$ has a slice that is a subset of $Q$, and
-    \item there exists a fail-compatible set $A$ such that, for every process $p\in Q\setminus A$, $p$ has a slice that is a subset of $Q$.
+    \item there exists a fail-compatible set $A$ such that, for every process $p\in Q\setminus A$, $p$ has a slice that is a subset of $Q$.\mytodo{This does not work; quorums depend on the execution, i.e.\ the scope of the quantification on $A$ is wrong.}
       \label{item:canonical_2}
   \end{enumerate}
 \end{definition}
@@ -191,7 +191,7 @@ We now define the canonical federated quorum system for a federated fail-prone s
   Let us now show that $\overline{\mathbb{F}}$ satisfies the Consistency property.
   Consider two processes $p_i$ and $p_j$, a quorum $Q_i$ of $p_i$, and a quorum $Q_j$ of $p_j$.
   We must show that $Q_i$ and $Q_j$ have a well-behaved member in common (i.e.\ a common member in $\mathcal{P}\setminus A$).
-  By definition of $\overline{\mathbb{F}}$, for every quorum $Q$ of $p_i$, there exists a slice-choice array $\mathcal{S}_Q=\left[S_Q^1,...,S_Q^n\right]$ such that, for every $p_k\in Q$, $S_Q^k\subseteq Q$.
+  By definition of $\overline{\mathbb{F}}$, for every quorum $Q$ of $p_i$, there exists a slice-choice array $\mathcal{S}_Q=\left[S_Q^1,...,S_Q^n\right]$ such that, for every $p_k\in Q$, $S_Q^k\subseteq Q$.\mytodo{No. It's $p_k\in Q\setminus A$ for some $A$}
   Similarly, for every quorum $Q'$ of $p_j$, there exists a slice-choice array $\mathcal{S}_{Q'}=\left[S_{Q'}^1,...,S_{Q'}^n\right]$ such that, for every $p_k\in Q'$, $S_{Q'}^k\subseteq Q'$.
   Now consider the slice-choice graphs $G_Q$ and $G_{Q'}$ corresponding to $\mathcal{S}_Q$ and $\mathcal{S}_{Q'}$, respectively.
   By Property~$Q^3(\mathcal{F})$, we obtain that the set of vertices reachable from $p_i$ in $G_Q-A$ intersects the set of vertices reachable from $p_j$ in $G_{Q'}-A$.
