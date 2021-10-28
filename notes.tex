@@ -1,0 +1,88 @@
+\documentclass[11pt,letterpaper]{article}
+
+% \usepackage[lmargin=0in,rmargin=2.5in]{geometry}
+\setlength{\marginparwidth}{1.5in}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{xcolor}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage[]{hyperref}
+\hypersetup{
+  colorlinks=false,
+}
+\usepackage{cleveref}
+% \usepackage[disable]{todonotes}
+\usepackage{todonotes}
+\newcommand{\mytodo}[1]{\todo[size=\scriptsize]{#1}}
+
+\usepackage{biblatex}
+\addbibresource{library.bib}
+
+\newtheorem{property}{Property}
+\newtheorem{definition}{Definition}
+\newtheorem{claim}{Claim}
+\newtheorem{rrule}{Rule}
+\newtheorem{thm}{Theorem}
+
+\newcommand{\note}[1]{{\color{red}#1}}
+
+\title{Asymmetric Distributed Trust in a Permissionless System}
+\date{\today}
+\author{Giuliano Losa\\giuliano@losa.fr}
+
+\begin{document}
+
+\maketitle
+
+\section{Federated Fail-Prone Systems}
+\label{sec:basic}
+
+We consider a set of processes $\mathcal{P}=\left\{p_1,...,p_n\right\}$ in a message-passing system with Byzantine failures.
+We assume that processes do not know $\mathcal{P}$.
+Instead, each process $p_i$ trusts a subset $T_i$ of the processes.
+However, $p_i$ trusts members of $T_i$ only to the extent that they do not fail, and $p_i$ makes assumptions about those failures using a fail-prone system $\mathcal{F}_i$ over $T_i$ (i.e.\ $\mathcal{F}_i\subseteq 2^{T_i}$);
+$\mathcal{F}_i$ represents the subsets of $T_i$ that $p_i$ thinks can fail together in an execution.
+Note that, in a permissionless system, we expect that two different processes $p_i$ and $p_j$ might have non-intersecting trusted sets, i.e.\ it is well possible that $T_i\cap T_j=\emptyset$.
+
+We described the trusted sets and fail-prone systems of the processes using a federated fail-prone system, which is an array $\mathbb{F}=\left[\left(T_1,\mathcal{F}_1\right),...,\left(T_n,\mathcal{F}_n\right)\right]$ that associates to each process $p_i$ a set of trusts processes $T_i$ and a fail-prone system $\mathcal{F}_i$ over $T_i$.
+We now consider a fixed federated fail-prone system $\mathbb{F}$.
+
+We now make a few definitions relating the processes' failure assumptions and the actual failures happening in an execution.
+We say that a set $A$ is fail-compatible if and only if, for every process $p_i$ in $\mathcal{P}\setminus A$, there exists $F\in\mathcal{F}_i$ such that $T_i\cap A \subseteq F$.
+Given an execution, we say that a process that does not fail during an execution is well-behaved in that execution, and otherwise it is faulty.
+We say that an execution is fail-compatible if and only if the set of faulty processes in that execution is fail-compatible.
+
+Given a federated fail-prone system, we would like to obtain a quorum system that enables solving problems such as reliable broadcast and consensus in fail-compatible executions.
+Since processes each make their own failure assumptions, we consider quorum systems in which each process has its own set of quorums, as formalized in federated quorum systems.
+A federated quorum system $\mathbb{Q}$ is an array $\left[\mathcal{Q}_1,...,\mathcal{Q}_n\right]$ where, for every process $p_i$, $\mathcal{Q}_i$ is a quorum system over $\mathcal{P}$ (i.e.\ $Q_i\subseteq 2^{\mathcal{P}}$).
+We would like a quorum system to satisfy the following two properties.
+\begin{itemize}
+  \item[Availability] In every fail-compatible execution, every well-behaved process $p_i$  has at least one quorum that is exclusively well-behaved.
+  \item[Consistency] In every fail-compatible execution, for every two well-behaved processes $p_i$ and $p_j$, for every two quorums $Q_i$ of $p_i$ and $Q_j$ of $p_j$, $Q_i$ and $Q_j$ have a well-behaved member in common.
+\end{itemize}
+
+Note that, since our goal is for our construction to be useful in permissionless systems, we do not want to require that processes' trusted sets intersect, or some other pairwise condition on processes' fail-prone systems, as that would mean that a process that joins the system has to synchronize with every other process already in the system.
+Thus, the simple approach consisting of defining the quorums of a process $p_i$ as the sets of the form $T_i\setminus F$, where $F\in\mathcal{F}_i$, does not make sense in this context.
+
+\subsection{The Canonical Quorum System}
+
+We now define the canonical quorum system $\mathcal{Q}$ for $\mathbb{F}$.
+However, let us first make an important observation.
+If we are to define the quorums of a process $p_i$ in terms of the trusted sets and fail-prone sets of other processes in the system, we face the challenge that faulty processes may lie about their trusted sets and fail-prone sets.
+Thus, because they depend on the possible lies of faulty processes, the quorums of a well-behaved process must depend on the execution we are considering.
+Thus, the Canonical Quorum System maps each execution to a quorum system that soundly approximates the worst that faulty nodes can do.
+
+\begin{definition}[Canonical Quorum System]
+  Given an execution $e$ with faulty set $A$, the Canonical Quorum System $\mathcal{Q}(e)$ is such that, for every $p_i$, for every set $Q$ of processes, $Q$ is a quorum of $p_i$ if and only if:
+\begin{enumerate}
+  \item For every $p_j$ in $Q\setminus A$, there is a fail-prone set $F$ of $p_j$ such that $T_j\setminus F \subseteq Q$.
+  \item There is a fail-prone set $F$ of $p_i$ such that $T_i\setminus F \subseteq Q$.
+\end{enumerate}
+\end{definition}
+
+
+\end{document}
+
+\maketitle
+
+
