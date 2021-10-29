@@ -26,7 +26,7 @@
 
 \newcommand{\note}[1]{{\color{red}#1}}
 
-\title{Asymmetric Distributed Trust in a Permissionless System}
+\title{Notes on Asymmetric Distributed Trust in a Permissionless System}
 \date{\today}
 \author{Giuliano Losa\\giuliano@losa.fr}
 
@@ -50,7 +50,7 @@ We now consider a fixed federated fail-prone system $\mathbb{F}$.
 We now make a few definitions relating the processes' failure assumptions and the actual failures happening in an execution.
 We say that a set $A$ is fail-compatible if and only if, for every process $p_i$ in $\mathcal{P}\setminus A$, there exists $F\in\mathcal{F}_i$ such that $T_i\cap A \subseteq F$.
 Given an execution, we say that a process that does not fail during an execution is well-behaved in that execution, and otherwise it is faulty.
-We say that an execution is fail-compatible if and only if the set of faulty processes in that execution is fail-compatible.
+We say that an execution is fail-compatible if and only if the set of faulty processes in that execution, noted $A$, is fail-compatible.
 
 Given a federated fail-prone system, we would like to obtain a quorum system that enables solving problems such as reliable broadcast and consensus in fail-compatible executions.
 Since processes each make their own failure assumptions, we consider quorum systems in which each process has its own set of quorums, as formalized in federated quorum systems.
@@ -66,20 +66,91 @@ Thus, the simple approach consisting of defining the quorums of a process $p_i$ 
 
 \subsection{The Canonical Quorum System}
 
-We now define the canonical quorum system $\mathcal{Q}$ for $\mathbb{F}$.
+We now define the canonical quorum system $\overline{\mathbb{F}}$ for $\mathbb{F}$.
 However, let us first make an important observation.
 If we are to define the quorums of a process $p_i$ in terms of the trusted sets and fail-prone sets of other processes in the system, we face the challenge that faulty processes may lie about their trusted sets and fail-prone sets.
 Thus, because they depend on the possible lies of faulty processes, the quorums of a well-behaved process must depend on the execution we are considering.
 Thus, the Canonical Quorum System maps each execution to a quorum system that soundly approximates the worst that faulty nodes can do.
 
+Before we proceed, let us define the notion of slice.
+A set $S$ is a slice of process $p_i$ if and only if there is a fail-prone set $F\in \mathcal{F}_i$ such that $S=P_i\setminus F$.
+(Note that, in a fail-compatible execution, every process that does not fail can count on one of its slices to be well-behaved).
+
+Since faulty processes may lie about their slices, we will also use the notion of observed slice, which is a slice as observed by a process in a given execution.
+If $p_i$ is a well-behaved process, then the slices of $p_i$ as observed by process $p_i$ are exactly $p_i$'s slices.
+Otherwise, if $p_j$ is faulty, then the slices of $p_i$ as observed by $p_i$ may be arbitrary.
+
+We now define the notion of effective quorum, which is a set of processes deemed a quorum by a process in an execution, and the corresponding Effective Quorum System.
+\begin{definition}[Effective Quorum System]
+  The Effective Quorum System is such that a set $Q$ is an effective quorum of $p_i$ if and only if:
+  \begin{enumerate}
+    \item For every $p_j$ in $Q$, there is an observed slice $S$ of $p_j$, as observed by $p_i$, such that $S \subseteq Q$.
+    \item There is a fail-prone set $F$ of $p_i$ such that $T_i\setminus F \subseteq Q$.
+  \end{enumerate}
+\end{definition}
+
+Note that the effective quorums of a process $p_i$ not only depend on which processes are faulty in an execution, but also on what slices $p_i$ observes.
+In order to simplify our analysis, we now define the Canonical Quorum System for $\mathbb{F}$, where the quorums of a process only depend on what processes are faulty in an execution.
+Crucially, the Canonical Quorum System is a sound abstraction of effective quorums.
+
 \begin{definition}[Canonical Quorum System]
-  Given an execution $e$ with faulty set $A$, the Canonical Quorum System $\mathcal{Q}(e)$ is such that, for every $p_i$, for every set $Q$ of processes, $Q$ is a quorum of $p_i$ if and only if:
+  Given an execution $e$ with faulty set $A$, the Canonical Quorum System $\overline{\mathbb{F}}(e)$ is such that, for every $p_i$, for every set $Q$ of processes, $Q$ is a quorum of $p_i$ if and only if:
 \begin{enumerate}
-  \item For every $p_j$ in $Q\setminus A$, there is a fail-prone set $F$ of $p_j$ such that $T_j\setminus F \subseteq Q$.
+  \item For every $p_j$ in $Q\setminus A$, there is a slice $S$ of $p_j$ such that $S \subseteq Q$.
+    \label{def:quorum_1}
   \item There is a fail-prone set $F$ of $p_i$ such that $T_i\setminus F \subseteq Q$.
 \end{enumerate}
 \end{definition}
 
+Note that, in~\Cref{def:quorum_1} above, we exclude faulty processes from the range of the outermost quantifier.
+Thus, regardless of what slices $p_i$ observes, every effective quorum of $p_i$ is a quorum of $p_i$ in the Canonical Quorum System.
+This is why the approximation is safe.
+
+\subsubsection{Availability}
+
+From the definition of fail-compatible execution, we immediately get that, for every fail-compatible execution $e$ and for every non-faulty process $p_i$ in that execution, $p_i$ has at least one non-faulty quorum: this quorum is the set $\mathcal{P}\setminus A$ (where $A$ is the set of faulty processes in $e$).
+Thus, $\mathcal{Q}$ satisfies the Availability Property.
+
+Moreover, because the observed slices of well-behaved nodes are exactly the slices of well-behaved nodes, $\mathcal{P}\setminus A$ is also an effective quorum of every process.
+Thus, the Effective Quorum System also satisfies the Availability Property.
+
+\subsubsection{Consistency}
+
+Let us now turn our attention to the Consistency Property.
+In General, there is no reason for Consistency to hold.
+Instead, we now provide a condition on the fail-prone system $\mathbb{F}$ that imply that, for every fail-compatible execution $e$, the Canonical Quorum System $\mathcal{Q}(e)$ satisfies the Consistency Property.
+
+We start with a few preliminary definitions.
+Define a slice choice $\mathcal{S}$ as an array $\left[S_1,...,S_n\right]$ of slices, where, for every $i$, $S_i$ is a slice of $p_i$.
+Note that a slice-choice array can be seen as a directed graph, called slice-choice graph, whose nodes are the processes and where there is an edge between $p_i$ and $p_j$ if and only if $p_j$ is in the slice $S_i$.
+Finally, if $A$ is a subset of the vertices of $G$, we write $G-A$ for the graph obtained by removing from $G$ all edges $(p,q)$ such that either $p\in A$ or $q\in A$.
+
+\begin{definition}[Property $B^3(\mathbb{F})$]
+  Property $B^3(\mathbb{F})$ holds if and only if for every two processes $p_i$ and $p_j$, for every two slice-choice graphs $G_i$ and $G_j$, for every fail-compatible set $A$ where $p_i\not\in A$ and $p_j\not\in A$, the set of vertices reachable from $p_i$ in $G_i-A$ intersects the set of vertices reachable from $p_j$ in $G_j-A$.
+\end{definition}
+
+Intuitively, Property $B^3(\mathbb{F})$ says that, in every fail-compatible execution, two processes can always transitively hear from a third common process despite failures.
+
+\begin{claim}
+  \label{thm:canonical}
+  If $B^3(\mathcal{F})$ holds, then the Canonical Quorum System for $\mathbb{F}$ satisfies the  Consistency property.
+\end{claim}
+\begin{proof}
+  Consider a fail-compatible execution and let $A$ be the set of processes that fail during the execution.
+
+  Let us now show that $\overline{\mathbb{F}}$ satisfies the Consistency property.
+  Consider two well-behaved processes $p_i$ and $p_j$, a quorum $Q_i$ of $p_i$, and a quorum $Q_j$ of $p_j$.
+  We must show that $Q_i$ and $Q_j$ have a well-behaved member in common (i.e.\ a common member in $\mathcal{P}\setminus A$).
+
+  By definition of $\overline{\mathbb{F}}$, there exists a slice-choice array $\mathcal{S}_Q=\left[S_Q^1,...,S_Q^n\right]$ such that, for every $p_k\in (Q\cup\{p_i\})\setminus A$, $S_Q^k\subseteq Q$.
+  Similarly, there exists a slice-choice array $\mathcal{S}_{Q'}=\left[S_{Q'}^1,...,S_{Q'}^n\right]$ such that, for every $p_k\in (Q'\cup\{p_j\})\setminus A$, $S_{Q'}^k\subseteq Q'$.
+
+  Now consider the slice-choice graphs $G_Q$ and $G_{Q'}$ corresponding to $\mathcal{S}_Q$ and $\mathcal{S}_{Q'}$, respectively.
+  By Property~$B^3(\mathcal{F})$, we obtain that the set of vertices reachable from $p_i$ in $G_Q-A$ intersects the set of vertices reachable from $p_j$ in $G_{Q'}-A$.
+  Moreover, observe that the set of vertices reachable from $p_i$ in $G_Q-A$ is a subset of $Q$.
+  Similarly, observe that the set of vertices reachable from $p_j$ in $G_{Q'}-A$ is a subset of $Q'$.
+  Thus, we conclude that $Q$ and $Q'$ have a well-behaved member in common.
+\end{proof}
 
 \end{document}
 
